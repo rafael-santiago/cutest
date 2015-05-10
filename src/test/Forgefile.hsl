@@ -1,0 +1,14 @@
+include ~/toolsets/gcc/gcc-app.hsl
+
+var sources type list;
+var includes type list;
+var cflags type list;
+var libraries type list;
+var ldflags type list;
+
+project cute : toolset "gcc-c-app" : $sources, $includes, $cflags, $libraries, $ldflags, "cute";
+
+cute.prologue() {
+    $ldflags.add_item("../lib/cute.a");
+    $sources.ls(".*\\.c$");
+}
