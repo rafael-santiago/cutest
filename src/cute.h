@@ -12,17 +12,17 @@
 
 #define CUTE_CHECK(msg, chk) do { if ((chk) == 0) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
 
-#define CUTE_CHECK_EQUAL(msg, a, b) do { if ((a) == (b)) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_EQUAL(msg, a, b) do { if (!((a) == (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
 
-#define CUTE_CHECK_NEQUAL(msg, a, b) do { if ((a) != (b)) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_NEQUAL(msg, a, b) do { if (!((a) != (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
 
-#define CUTE_CHECK_LESS(msg, a, b) do { if ((a) < (b)) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_LESS(msg, a, b) do { if (!((a) < (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
 
-#define CUTE_CHECK_GREATER(msg, a, b) do { if ((a) > (b)) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_GREATER(msg, a, b) do { if (!((a) > (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
 
-#define CUTE_CHECK_LEQUALS(msg, a, b) do { if ((a) <= (b)) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_LEQUALS(msg, a, b) do { if (!((a) <= (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
 
-#define CUTE_CHECK_GEQUALS(msg, a, b) do { if ((a) >= (b)) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_GEQUALS(msg, a, b) do { if (!((a) >= (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
 
 #define CUTE_RUN_TEST(test) do {\
                             printf("-- running %s...\n", #test);\
@@ -36,7 +36,7 @@
                                         CUTE_RUN_TEST(test);\
                                      } } while (0)
 
-#define CUTE_RUN(entry) do { char *entry_return = entry(); if (entry_return == NULL) printf("*** all tests passed. [%d test(s) ran]\n", g_cute_ran_tests); else printf("*** fail: %s [%d test(s) ran]\n", entry_return, g_cute_ran_tests); } while(0);
+#define CUTE_RUN(entry) do { char *entry_return = entry(); if (entry_return == NULL) printf("*** all tests passed. [%d test(s) ran]\n", g_cute_ran_tests); else { printf("*** fail: %s [%d test(s) ran]\n", entry_return, g_cute_ran_tests); return 1; } } while(0);
 
 #define CUTE_TEST_CASE(test) char *test() {
 
