@@ -12,17 +12,17 @@
 
 #define CUTE_CHECK(msg, chk) do { if ((chk) == 0) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
 
-#define CUTE_CHECK_EQUAL(msg, a, b) do { if (!((a) == (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_EQ(msg, a, b) CUTE_CHECK(msg, (a) == (b))
 
-#define CUTE_CHECK_NEQUAL(msg, a, b) do { if (!((a) != (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_NEQ(msg, a, b) CUTE_CHECK(msg, (a) != (b))
 
-#define CUTE_CHECK_LESS(msg, a, b) do { if (!((a) < (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_LE(msg, a, b) CUTE_CHECK(msg, (a) < (b))
 
-#define CUTE_CHECK_GREATER(msg, a, b) do { if (!((a) > (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_GR(msg, a, b) CUTE_CHECK(msg, (a) > (b))
 
-#define CUTE_CHECK_LEQUALS(msg, a, b) do { if (!((a) <= (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_LEQ(msg, a, b) CUTE_CHECK(msg, (a) <= (b))
 
-#define CUTE_CHECK_GEQUALS(msg, a, b) do { if (!((a) >= (b))) { printf("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); return msg; } } while (0)
+#define CUTE_CHECK_GEQ(msg, a, b) CUTE_CHECK(msg, (a) >= (b))
 
 #define CUTE_RUN_TEST(test) do {\
                             printf("-- running %s...\n", #test);\

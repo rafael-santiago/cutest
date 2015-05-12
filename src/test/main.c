@@ -20,18 +20,18 @@ char *get_test_decl_return() {
 CUTE_TEST_CASE(assertion_tests)
     unsigned int foo = 0xdeadbeef;
     CUTE_CHECK("foo != 0xdeadbeef", foo == 0xdeadbeef);
-    CUTE_CHECK_EQUAL("foo != 0xdeadbeef", foo, 0xdeadbeef);
-    CUTE_CHECK_NEQUAL("foo == 0xf00b45", foo, 0xf00b45);
+    CUTE_CHECK_EQ("foo != 0xdeadbeef", foo, 0xdeadbeef);
+    CUTE_CHECK_NEQ("foo == 0xf00b45", foo, 0xf00b45);
     foo = 10;
-    CUTE_CHECK_LESS("foo > 11", foo, 11);
-    CUTE_CHECK_GREATER("foo > 9", foo, 9);
-    CUTE_CHECK_LEQUALS("foo > 10", foo, 10);
-    CUTE_CHECK_GEQUALS("foo < 10", foo, 10);
+    CUTE_CHECK_LE("foo > 11", foo, 11);
+    CUTE_CHECK_GR("foo > 9", foo, 9);
+    CUTE_CHECK_LEQ("foo > 10", foo, 10);
+    CUTE_CHECK_GEQ("foo < 10", foo, 10);
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(cute_tests)
     char *retval = get_test_decl_return();
-    CUTE_CHECK_EQUAL("retval != NULL", retval, NULL);
+    CUTE_CHECK_EQ("retval != NULL", retval, NULL);
     CUTE_RUN_TEST(assertion_tests);
 CUTE_TEST_CASE_END
 
