@@ -11,7 +11,7 @@ var sources type list;
 var includes type list;
 var cflags type list;
 
-project cute : toolset "gcc-c-lib" : $sources, $includes, $cflags, "cute.a" ;
+project cute : toolset "gcc-c-lib" : $sources, $includes, $cflags, "libcute.a" ;
 
 cute.prologue() {
     hefesto.sys.echo("*** NOW BUILDING cute.a... wait...\n\n");

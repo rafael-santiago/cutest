@@ -17,7 +17,7 @@ project cute-test : toolset "gcc-c-app" : $sources, $includes, $cflags, $librari
 
 cute-test.prologue() {
     hefesto.sys.echo("*** NOW RUNNING cute's UNIT TESTS... wait...\n\n");
-    $ldflags.add_item("../lib/cute.a");
+    $ldflags.add_item("../lib/libcute.a");
     $sources.ls(".*\\.c$");
 }
 
