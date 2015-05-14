@@ -1,4 +1,8 @@
-# How to use it?
+# Libcute usage guide
+
+This document summarizes what is necessary to do in order to write unit tests for your project using ``libcute``.
+
+## How to use it?
 
 Firstly you need to include the main library header which stands for:
 
@@ -12,6 +16,10 @@ Basically the ``main`` function from your test binary should include a call to t
 	    CUTE_RUN(entry);
 	    return 0;
 	}
+
+But for convenience ``cute`` brings a short way to define it:
+
+        CUTE_MAIN(entry);
 
 The entry point is merely an unit test case which must be declared using special definition macros:
 
@@ -34,11 +42,11 @@ example:
 The example below will break if for some reason one be equals to zero. In this case the error message
 passed as first argument will be shown. The second argument is the logical test assertion.
 
-# Available assertion macros
+## Available assertion macros
 
 Until now these are the available assertion macros.
 
-## CUTE_CHECK()
+### CUTE_CHECK()
 
 Implements a generic assertion.
 
@@ -48,7 +56,7 @@ Example:
 
 	CUTE_CHECK("boo!", strcmp(buffer, "foobar") != 0);
 
-## CUTE_CHECK_EQ()
+### CUTE_CHECK_EQ()
 
 Implements an ``equals-to`` assertion.
 
@@ -58,7 +66,7 @@ Example:
 
 	CUTE_CHECK_EQ("error exit_code != 0", x, 0);
 
-## CUTE_CHECK_NEQ()
+### CUTE_CHECK_NEQ()
 
 Implements a ``not-equals-to`` assertion.
 
@@ -68,7 +76,7 @@ Example:
 
 	CUTE_CHECK_NEQ("error x == -1", x, -1);
 
-## CUTE_CHECK_LE()
+### CUTE_CHECK_LE()
 
 Implements a ``less-than`` assertion.
 
@@ -78,7 +86,7 @@ Example:
 
 	CUTE_CHECK_LE("x > 19", x, 20);
 
-## CUTE_CHECK_LEQ()
+### CUTE_CHECK_LEQ()
 
 Implements a ``less-than-or-equals-to`` assertion.
 
@@ -88,7 +96,7 @@ Example:
 
 	CUTE_CHECK_LEQ("x >= 21", x, 20);
 
-## CUTE_CHECK_GR()
+### CUTE_CHECK_GR()
 
 Implements a ``greater-than`` assertion.
 
@@ -98,7 +106,7 @@ Example:
 
 	CUTE_CHECK_GR("x <= 99", x, 100);
 
-## CUTE_CHECK_GEQ()
+### CUTE_CHECK_GEQ()
 
 Implements a ``greater-than-or-equals-to`` assertion.
 
@@ -108,7 +116,7 @@ Example:
 
 	CUTE_CHECK_GEQ("x <= 19", x, 20);
 
-# How to link my test with cute?
+## How to link my test with cute?
 
 In order to ``link`` your test binary you can proceed like that:
 
@@ -119,3 +127,8 @@ Or still:
 ``gcc your-test.c -oyour-test -lcute``
 
 If you put the libcute in a well-known place.
+
+## Relevant options which your test binary accepts
+
+Until now there is only one option: ``--cute-log-path=<filepath>``. This option specifies a file path
+where the test log will be dumped.

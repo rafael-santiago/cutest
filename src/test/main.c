@@ -29,17 +29,22 @@ CUTE_TEST_CASE(assertion_tests)
     CUTE_CHECK_GEQ("foo < 10", foo, 10);
 CUTE_TEST_CASE_END
 
-CUTE_TEST_CASE(cute_tests)
-    char *retval = get_test_decl_return();
-    CUTE_CHECK_EQ("retval != NULL", retval, NULL);
-    CUTE_RUN_TEST(assertion_tests);
+CUTE_TEST_CASE(get_option_tests)
+    char *argv[] = {
+        "--cute-log-path=/usr/boo",
+        "--passed"
+    };
+    CUTE_CHECK_EQ("cute_get_option() != NULL", NULL, cute_get_option("none", 2, argv, NULL));
+    CUTE_CHECK_EQ("cute_get_option() != NULL", NULL, cute_get_option(NULL, 2, argv, NULL));
+    CUTE_CHECK_EQ("cute_get_option() != \"/usr/boo\"", 0, strcmp(cute_get_option("--cute-log-path", 2, argv, "(null)"), "/usr/boo"));
+    CUTE_CHECK_EQ("cute_get_option() != \"1\"", 0, strcmp(cute_get_option("--passed", 2, argv, "0"), "1"));
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(entry)
-    CUTE_RUN_TEST(cute_tests);
+    char *retval = get_test_decl_return();
+    CUTE_CHECK_EQ("retval != NULL", retval, NULL);
+    CUTE_RUN_TEST(assertion_tests);
+    CUTE_RUN_TEST(get_option_tests);
 CUTE_TEST_CASE_END
 
-int main(int argc, char **argv) {
-    CUTE_RUN(entry);
-    return 0;
-}
+CUTE_MAIN(entry)
