@@ -19,7 +19,7 @@ Basically the ``main`` function from your test binary should include a call to t
 
 But for convenience ``cute`` brings a short way to define it:
 
-        CUTE_MAIN(entry);
+        CUTE_MAIN(entry)
 
 The entry point is merely an unit test case which must be declared using special definition macros:
 
