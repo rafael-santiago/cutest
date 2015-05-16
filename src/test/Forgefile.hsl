@@ -25,9 +25,9 @@ cute-test.epilogue() {
     if (hefesto.sys.last_forge_result() == 0) {
         var exit_code type int;
         if (hefesto.sys.os_name() != "windows") {
-            $exit_code = hefesto.sys.run("bin/cute");
+            $exit_code = hefesto.sys.run("bin/cute --foo=bar");
         } else {
-            $exit_code = hefesto.sys.run("bin\\cute.exe");
+            $exit_code = hefesto.sys.run("bin\\cute.exe --foo=bar");
         }
         if ($exit_code != 0) {
             hefesto.sys.echo("\n~~~~ UNIT TEST ERROR.\n\n");

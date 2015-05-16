@@ -16,6 +16,10 @@ int g_cute_general_counter = 0;
 
 FILE *g_cute_log_fd = NULL;
 
+char **g_cute_argv = NULL;
+
+int g_cute_argc = 0;
+
 void cute_open_log_fd(const char *filepath) {
     cute_close_log_fd();
     g_cute_log_fd = fopen(filepath, "wb");
@@ -109,13 +113,13 @@ char *cute_get_option(const char *option, int argc, char **argv, char *default_v
     if (option == NULL || argv == NULL || *argv == NULL) {
         return default_value;
     }
-    sprintf(optlabel, "%s=", option);
+    sprintf(optlabel, "--%s=", option);
     for (a = 0; a < argc; a++) {
         if (strstr(argv[a], optlabel) == argv[a]) {
             return argv[a] + strlen(optlabel);
         }
     }
-    sprintf(optlabel, "%s", option);
+    sprintf(optlabel, "--%s", option);
     for (a = 0; a < argc; a++) {
         if (strstr(argv[a], optlabel) == argv[a]) {
             return "1";

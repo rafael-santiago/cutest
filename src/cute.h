@@ -61,7 +61,9 @@
 #define CUTE_FIXTURE_TEARDOWN(test) void test ## _teardown() {
 
 #define CUTE_MAIN(entry) int main(int argc, char **argv) {\
-                          char *logpath = cute_get_option("--cute-log-path", argc, argv, NULL);\
+                          char *logpath = cute_get_option("cute-log-path", argc, argv, NULL);\
+                          g_cute_argv = argv;\
+                          g_cute_argc = argc;\
                           if (logpath != NULL) {\
                            cute_open_log_fd(logpath);\
                           }\
@@ -70,12 +72,17 @@
                           return 0;\
                          }
 
+#define CUTE_GET_OPTION(o) ( cute_get_option(o, g_cute_argc, g_cute_argv, NULL) )
 
 extern int g_cute_general_counter;
 
 extern int g_cute_ran_tests;
 
 extern FILE *g_cute_log_fd;
+
+extern char **g_cute_argv;
+
+extern int g_cute_argc;
 
 void cute_open_log_fd(const char *filepath);
 

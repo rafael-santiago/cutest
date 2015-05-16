@@ -38,8 +38,8 @@ CUTE_TEST_CASE(get_option_tests)
     };
     CUTE_CHECK_EQ("cute_get_option() != NULL", NULL, cute_get_option("none", 2, argv, NULL));
     CUTE_CHECK_EQ("cute_get_option() != NULL", NULL, cute_get_option(NULL, 2, argv, NULL));
-    CUTE_CHECK_EQ("cute_get_option() != \"/usr/boo\"", 0, strcmp(cute_get_option("--cute-log-path", 2, argv, "(null)"), "/usr/boo"));
-    CUTE_CHECK_EQ("cute_get_option() != \"1\"", 0, strcmp(cute_get_option("--passed", 2, argv, "0"), "1"));
+    CUTE_CHECK_EQ("cute_get_option() != \"/usr/boo\"", 0, strcmp(cute_get_option("cute-log-path", 2, argv, "(null)"), "/usr/boo"));
+    CUTE_CHECK_EQ("cute_get_option() != \"1\"", 0, strcmp(cute_get_option("passed", 2, argv, "0"), "1"));
 CUTE_TEST_CASE_END
 
 CUTE_FIXTURE_SETUP(fixture_test)
@@ -54,6 +54,14 @@ CUTE_TEST_CASE(fixture_test)
     CUTE_CHECK_EQ("g_counter != 1", g_counter, 1);
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(CUTE_GET_OPTION_MACRO_test)
+    char *value = NULL;
+    CUTE_CHECK_EQ("CUTE_GET_OPTION(\"superunknown\") != NULL", CUTE_GET_OPTION("superunknown"), NULL);
+    value = CUTE_GET_OPTION("foo");
+    CUTE_CHECK_NEQ("CUTE_GET_OPTION(\"foo\") == NULL", value, NULL);
+    CUTE_CHECK("CUTE_GET_OPTION(\"foo\") != \"bar\"", strcmp(value, "bar") == 0);
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(entry)
     char *retval = get_test_decl_return();
     CUTE_CHECK_EQ("retval != NULL", retval, NULL);
@@ -61,6 +69,7 @@ CUTE_TEST_CASE(entry)
     CUTE_RUN_TEST(get_option_tests);
     CUTE_RUN_TEST_WITH_FIXTURE(fixture_test);
     CUTE_CHECK_EQ("g_counter != 2", g_counter, 2);
+    CUTE_RUN_TEST(CUTE_GET_OPTION_MACRO_test);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(entry)

@@ -152,3 +152,15 @@ If you put the libcute in a well-known place.
 
 Until now there is only one option: ``--cute-log-path=<filepath>``. This option specifies a file path
 where the test log will be dumped.
+
+## Reading command line options from your test cases
+
+Sometimes is necessary... So to do it you should use the macro ``CUTE_GET_OPTION(<option-name>)``. Supposing that you want to read the option ``--foobar`` try this:
+
+        char *foobar_value = CUTE_GET_OPTION("foobar");
+
+Note that the options should be passed in this form to your test binary:
+
+``somewhere/over/the/rainbow/your-test --foobar=option-with-content --flag-option``
+
+When you try to read an unknown option the return is always ``NULL`` and ``flag options`` always return ``"1"``.
