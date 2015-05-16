@@ -32,6 +32,17 @@
                             cute_log("-- passed.\n");\
                          } while (0)
 
+#define CUTE_RUN_TEST_WITH_FIXTURE(test) do {\
+                            test ## _setup();\
+                            cute_log("-- running %s...\n", #test);\
+                            char *msg = test();\
+                            g_cute_ran_tests++;\
+                            test ## _teardown();\
+                            if (msg != NULL) return msg;\
+                            cute_log("-- passed.\n");\
+                         } while (0)
+
+
 #define CUTE_RUN_TEST_NTIMES(test, times) do { for (g_cute_general_counter = 0; g_cute_general_counter < times; g_cute_general_counter++) {\
                                         CUTE_RUN_TEST(test);\
                                      } } while (0)
@@ -42,6 +53,12 @@
 
 #define CUTE_TEST_CASE_END  return NULL;\
                            }
+
+#define CUTE_FIXTURE_SETUP(test) void test ## _setup() {
+
+#define CUTE_FIXTURE_END  }
+
+#define CUTE_FIXTURE_TEARDOWN(test) void test ## _teardown() {
 
 #define CUTE_MAIN(entry) int main(int argc, char **argv) {\
                           char *logpath = cute_get_option("--cute-log-path", argc, argv, NULL);\

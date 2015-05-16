@@ -16,6 +16,7 @@ project cute : toolset "gcc-c-lib" : $sources, $includes, $cflags, "libcute.a" ;
 cute.prologue() {
     hefesto.sys.echo("*** NOW BUILDING cute.a... wait...\n\n");
     $sources.ls(".*\\.c$");
+    $cflags = hefesto.sys.get_option("cflags");
 }
 
 cute.epilogue() {

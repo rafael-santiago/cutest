@@ -7,6 +7,8 @@
  */
 #include "../cute.h"
 
+static int g_counter = 0;
+
 //  INFO(Santiago): nothing to do here but it breaks the compilation
 //                  if there is something wrong with the macro definition.
 CUTE_TEST_CASE(test_decl)
@@ -40,11 +42,25 @@ CUTE_TEST_CASE(get_option_tests)
     CUTE_CHECK_EQ("cute_get_option() != \"1\"", 0, strcmp(cute_get_option("--passed", 2, argv, "0"), "1"));
 CUTE_TEST_CASE_END
 
+CUTE_FIXTURE_SETUP(fixture_test)
+    g_counter = 1;
+CUTE_FIXTURE_END
+
+CUTE_FIXTURE_TEARDOWN(fixture_test)
+    g_counter++;
+CUTE_FIXTURE_END
+
+CUTE_TEST_CASE(fixture_test)
+    CUTE_CHECK_EQ("g_counter != 1", g_counter, 1);
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(entry)
     char *retval = get_test_decl_return();
     CUTE_CHECK_EQ("retval != NULL", retval, NULL);
     CUTE_RUN_TEST(assertion_tests);
     CUTE_RUN_TEST(get_option_tests);
+    CUTE_RUN_TEST_WITH_FIXTURE(fixture_test);
+    CUTE_CHECK_EQ("g_counter != 2", g_counter, 2);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(entry)

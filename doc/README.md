@@ -42,6 +42,26 @@ example:
 The example below will break if for some reason one be equals to zero. In this case the error message
 passed as first argument will be shown. The second argument is the logical test assertion.
 
+If your ``test-case`` needs fixtures you must declare the fixtures using the following schemas:
+
+        CUTE_FIXTURE_SETUP(my_test_case)
+            //  Some setup operations goes here.
+        CUTE_FIXTURE_END
+
+        CUTE_FIXTURE_TEARDOWN(my_test_case)
+            //  Some teardown operations goes here.
+        CUTE_FIXTURE_END
+
+        CUTE_TEST_CASE(my_test_case)  //  now you only need to declare the test case in standard form.
+            //  Some test asserts goes here.
+        CUTE_TEST_CASE_END
+
+        CUTE_TEST_CASE(entry)
+            CUTE_RUN_TEST_WITH_FIXTURE(my_test_case); // the test invocation macro differs from tests that do not have fixtures.
+        CUTE_TEST_CASE_END
+
+Tests with fixtures must defined the both fixtures, the setup and the teardown, otherwise you will get unresolved externals errors.
+
 ## Available assertion macros
 
 Until now these are the available assertion macros.
