@@ -60,7 +60,7 @@ If your ``test-case`` needs fixtures you must declare the fixtures using the fol
             CUTE_RUN_TEST_WITH_FIXTURE(my_test_case); // the test invocation macro differs from tests that do not have fixtures.
         CUTE_TEST_CASE_END
 
-Tests with fixtures must defined the both fixtures, the setup and the teardown, otherwise you will get unresolved externals errors.
+Tests with fixtures must defined the both fixtures, the setup and the teardown, otherwise you will get errors related with unresolved externals.
 
 ## Available assertion macros
 
