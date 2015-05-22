@@ -20,6 +20,14 @@ char **g_cute_argv = NULL;
 
 int g_cute_argc = 0;
 
+void (*g_cute_fixture_setup)() = NULL;
+
+void (*g_cute_fixture_teardown)() = NULL;
+
+int g_cute_last_exec_line = -1;
+
+char *g_cute_last_ref_file = NULL;
+
 void cute_open_log_fd(const char *filepath) {
     cute_close_log_fd();
     g_cute_log_fd = fopen(filepath, "wb");
