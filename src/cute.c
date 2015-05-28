@@ -20,6 +20,8 @@ char **g_cute_argv = NULL;
 
 int g_cute_argc = 0;
 
+int g_cute_leak_check = 0;
+
 void (*g_cute_fixture_setup)() = NULL;
 
 void (*g_cute_fixture_teardown)() = NULL;

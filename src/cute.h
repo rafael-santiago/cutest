@@ -14,6 +14,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#include "cute_mem.h"
+
 #define CUTE_CHECK(msg, chk) do { g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__; if ((chk) == 0) { cute_log("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); cute_close_log_fd(); return msg; } } while (0)
 
 #define CUTE_CHECK_EQ(msg, a, b) CUTE_CHECK(msg, (a) == (b))
@@ -97,7 +99,11 @@
                           signal(SIGABRT, sigsegv_watchdog);\
                           signal(SIGINT, sigint_watchdog);\
                           signal(SIGTERM, sigint_watchdog);\
+                          init_memory_func_ptr();\
                           logpath = cute_get_option("cute-log-path", argc, argv, NULL);\
+                          if (cute_get_option("cute-leak-check", argc, argv, NULL)) {\
+                           g_cute_leak_check = 1;\
+                          }\
                           g_cute_argv = argv;\
                           g_cute_argc = argc;\
                           if (logpath != NULL) {\
@@ -119,6 +125,8 @@ extern FILE *g_cute_log_fd;
 extern char **g_cute_argv;
 
 extern int g_cute_argc;
+
+extern int g_cute_leak_check;
 
 extern void (*g_cute_fixture_setup)();
 
