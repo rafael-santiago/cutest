@@ -6,6 +6,7 @@
  *
  */
 #include "../cute.h"
+#include "../cute_mmap.h"
 
 static int g_counter = 0;
 
@@ -62,6 +63,58 @@ CUTE_TEST_CASE(CUTE_GET_OPTION_MACRO_test)
     CUTE_CHECK("CUTE_GET_OPTION(\"foo\") != \"bar\"", strcmp(value, "bar") == 0);
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(cute_mmap_ctx_general_tests)
+    struct cute_mmap_ctx *mmap = NULL;
+    struct cute_mmap_ctx *mp = NULL;
+    char byte = 0;
+    int integer = 0;
+    float real = 0;
+    size_t mmap_nr = 0;
+    size_t m = 0;
+    struct expected_mmap_state {
+        size_t size;
+        void *ptr;
+    };
+    struct expected_mmap_state ems[] = {
+        { sizeof(byte), &byte },
+        { sizeof(integer), &integer },
+        { sizeof(real), &real }
+    };
+    mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(byte), &byte);
+    mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(integer), &integer);
+    mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(real), &real);
+    CUTE_CHECK("mmap == NULL", mmap != NULL);
+    mmap_nr = 0;
+    for (mp = mmap; mp != NULL; mp = mp->next, mmap_nr++);
+    CUTE_CHECK("mmap_nr != 3", mmap_nr == 3);
+    mmap_nr = sizeof(ems) / sizeof(ems[0]);
+    for (m = 0, mp = mmap; m < mmap_nr; m++, mp = mp->next) {
+        CUTE_CHECK_EQ("ems[m].size != mp->size", ems[m].size, mp->size);
+        CUTE_CHECK_EQ("ems[m].ptr != mp->addr", ems[m].ptr, mp->addr);
+    }
+    mmap = rm_allocation_from_cute_mmap_ctx(mmap, &byte);
+    mmap_nr = 0;
+    for (mp = mmap; mp != NULL; mp = mp->next, mmap_nr++);
+    CUTE_CHECK("mmap_nr != 2", mmap_nr == 2);
+
+    mmap = rm_allocation_from_cute_mmap_ctx(mmap, &real);
+    mmap_nr = 0;
+    for (mp = mmap; mp != NULL; mp = mp->next, mmap_nr++);
+    CUTE_CHECK("mmap_nr != 1", mmap_nr == 1);
+
+    mmap = rm_allocation_from_cute_mmap_ctx(mmap, NULL);
+    mmap_nr = 0;
+    for (mp = mmap; mp != NULL; mp = mp->next, mmap_nr++);
+    CUTE_CHECK("mmap_nr != 1", mmap_nr == 1);
+
+    mmap = rm_allocation_from_cute_mmap_ctx(mmap, &integer);
+    mmap_nr = 0;
+    for (mp = mmap; mp != NULL; mp = mp->next, mmap_nr++);
+    CUTE_CHECK("mmap_nr != 1", mmap_nr == 0);
+
+    del_cute_mmap_ctx(mmap);
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(entry)
     char *retval = get_test_decl_return();
     CUTE_CHECK_EQ("retval != NULL", retval, NULL);
@@ -70,6 +123,7 @@ CUTE_TEST_CASE(entry)
     CUTE_RUN_TEST_WITH_FIXTURE(fixture_test);
     CUTE_CHECK_EQ("g_counter != 2", g_counter, 2);
     CUTE_RUN_TEST(CUTE_GET_OPTION_MACRO_test);
+    CUTE_RUN_TEST(cute_mmap_ctx_general_tests);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(entry)

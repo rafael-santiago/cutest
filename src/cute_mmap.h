@@ -8,7 +8,9 @@
 #ifndef _CUTE_MMAP_H
 #define _CUTE_MMAP_H 1
 
-static int g_cute_mmap_id = 0;
+#include <stdlib.h>
+
+static long long g_cute_mmap_id = 0;
 
 struct cute_mmap_ctx {
     long long id;
@@ -17,11 +19,13 @@ struct cute_mmap_ctx {
     struct cute_mmap_ctx *next;
 };
 
-struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cut_mmap_ctx *mmap,
+struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap,
                                                       size_t size, void *addr);
 
-struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cut_mmap_ctx *mmap,
+struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mmap,
                                                        void *addr);
+
+void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap);
 
 
 #endif
