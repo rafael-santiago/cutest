@@ -15,6 +15,7 @@
 #include <stdlib.h>
 
 #include "cute_mem.h"
+#include "cute_mmap.h"
 
 #define CUTE_CHECK(msg, chk) do { g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__; if ((chk) == 0) { cute_log("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); cute_close_log_fd(); return msg; } } while (0)
 
@@ -135,6 +136,8 @@ extern void (*g_cute_fixture_teardown)();
 extern int g_cute_last_exec_line;
 
 extern char *g_cute_last_ref_file;
+
+extern struct cute_mmap_ctx *g_cute_mmap;
 
 void cute_open_log_fd(const char *filepath);
 

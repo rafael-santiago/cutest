@@ -30,6 +30,8 @@ int g_cute_last_exec_line = -1;
 
 char *g_cute_last_ref_file = NULL;
 
+struct cute_mmap_ctx *g_cute_mmap = NULL;
+
 void cute_open_log_fd(const char *filepath) {
     cute_close_log_fd();
     g_cute_log_fd = fopen(filepath, "wb");

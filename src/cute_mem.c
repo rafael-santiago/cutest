@@ -8,6 +8,7 @@
 #include "cute_mem.h"
 #include "cute.h"
 #include "cute_mmap.h"
+#include <dlfcn.h>
 
 static void *(*tru_calloc)(size_t, size_t) = NULL;
 
@@ -31,9 +32,10 @@ void *calloc(size_t nmemb, size_t size) {
         cute_log("libcute INTERNAL ERROR: null tru_calloc().");
         return NULL;
     }
-    if (g_cute_leak_check) {
-    }
     retval = tru_calloc(nmemb, size);
+    if (g_cute_leak_check) {
+	g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
+    }
     return retval;
 }
 
@@ -43,9 +45,10 @@ void *malloc(size_t size) {
         cute_log("libcute INTERNAL ERROR: null tru_malloc().");
         return NULL;
     }
-    if (g_cute_leak_check) {
-    }
     retval = tru_malloc(size);
+    if (g_cute_leak_check) {
+	g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
+    }
     return retval;
 }
 
@@ -55,6 +58,7 @@ void free(void *ptr) {
         return;
     }
     if (g_cute_leak_check) {
+	g_cute_mmap = rm_allocation_from_cute_mmap_ctx(g_cute_mmap, ptr);
     }
     tru_free(ptr);
 }
@@ -65,8 +69,10 @@ void *realloc(void *ptr, size_t size) {
         cute_log("libcute INTERNAL ERROR: null tru_realloc().");
         return NULL;
     }
-    if (g_cute_leak_check) {
-    }
     retval = tru_realloc(ptr, size);
+    if (g_cute_leak_check) {
+	g_cute_mmap = rm_allocation_from_cute_mmap_ctx(g_cute_mmap, ptr);
+	g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
+    }
     return retval;
 }
