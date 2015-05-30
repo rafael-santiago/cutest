@@ -77,7 +77,7 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
             last->next = burn->next;
             burn->next = NULL;
         }
-        del_cute_mmap_ctx(burn);
+        free(burn);
     }
     pthread_mutex_unlock(&mmap_mutex);
     return head;
