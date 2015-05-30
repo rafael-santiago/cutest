@@ -167,7 +167,7 @@ When you try to read an unknown option the return is always ``NULL`` and ``flag 
 
 ## Detection memory leaks
 
-Firstly be aware that the [``valgrind``](https://www.valgrind.org) usage is the best way to catch this kind of [raptors](https://xkcd.com/292/) inside your code. However ``cute`` brings a minimal system that performs memory leak detection. It could be a profitable way to detect this kind of issue as soon as possible. Because you will be looking for memory leaks being still on the test phase.
+Firstly be aware that the [``valgrind``](http://valgrind.org) usage is the best way to catch this kind of [raptors](https://xkcd.com/292/) inside your code. However ``cute`` brings a minimal system that performs memory leak detection. It could be a profitable way to detect this kind of issue as soon as possible. Because you will be looking for memory leaks being still on the test phase.
 
 The usage of this system must be flagged passing the option ``--cute-leak-check`` to your unit test binary. Something like:
 
