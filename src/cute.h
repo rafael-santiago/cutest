@@ -95,6 +95,7 @@
                          }\
                          int main(int argc, char **argv) {\
                           char *logpath = NULL;\
+                          int exit_code = 0;\
                           signal(SIGSEGV, sigsegv_watchdog);\
                           signal(SIGBUS, sigsegv_watchdog);\
                           signal(SIGABRT, sigsegv_watchdog);\
@@ -111,8 +112,13 @@
                            cute_open_log_fd(logpath);\
                           }\
                           CUTE_RUN(entry);\
+                          if (g_cute_leak_check && g_cute_mmap != NULL) {\
+                           cute_log_memory_leak();\
+                           del_cute_mmap_ctx(g_cute_mmap);\
+                           exit_code = 1;\
+                          }\
                           cute_close_log_fd();\
-                          return 0;\
+                          return exit_code;\
                          }
 
 #define CUTE_GET_OPTION(o) ( cute_get_option(o, g_cute_argc, g_cute_argv, NULL) )
@@ -146,5 +152,7 @@ void cute_close_log_fd();
 void cute_log(const char *msg, ...);
 
 char *cute_get_option(const char *option, int argc, char **argv, char *default_value);
+
+void cute_log_memory_leak();
 
 #endif

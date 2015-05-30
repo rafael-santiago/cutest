@@ -9,6 +9,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 int g_cute_ran_tests = 0;
 
@@ -49,10 +50,12 @@ void cute_close_log_fd() {
 
 void cute_log(const char *msg, ...) {
     const char *mp = msg;
-    char *s, c;
-    int d;
+    char *s = NULL, c = 0;
+    int d = 0;
+    void *m = NULL;
     int should_log_to_stdout = (g_cute_log_fd == NULL);
     va_list val;
+    long long l = 0;
     if (mp == NULL) {
         return;
     }
@@ -81,6 +84,16 @@ void cute_log(const char *msg, ...) {
                 case 'x':
                     d = va_arg(val, int);
                     fprintf(g_cute_log_fd, "0x%.8X", d);
+                    break;
+
+                case 'm':
+                    m = va_arg(val, void *);
+                    fprintf(g_cute_log_fd, sizeof(void *) == 4 ? "0x%.8X" : "0x%.16X", m);
+                    break;
+
+                case 'l':
+                    l = va_arg(val, long long);
+                    fprintf(g_cute_log_fd, "%lld", l);
                     break;
 
                 default:
@@ -138,4 +151,24 @@ char *cute_get_option(const char *option, int argc, char **argv, char *default_v
         }
     }
     return default_value;
+}
+
+void cute_log_memory_leak() {
+    struct cute_mmap_ctx *mp;
+    size_t a = 0;
+    size_t leak_total = 0;
+    cute_log("\n\ncute INTERNAL ERROR: Memory leak(s) detected!!\n\n>>>\n");
+    for (mp = g_cute_mmap; mp != NULL; mp = mp->next) {
+        cute_log("Id=%l Address=%m < ", mp->id, mp->addr);
+        for (a = 0; a < mp->size; a++) {
+            if (isprint(((char *)mp->addr)[a])) {
+                cute_log("%c", ((char *)mp->addr)[a]);
+            } else {
+                cute_log(".");
+            }
+        }
+        cute_log(" > %d byte(s).\n", mp->size);
+        leak_total += mp->size;
+    }
+    cute_log("\nLeak total: %d byte(s).\n<<<\n", leak_total);
 }
