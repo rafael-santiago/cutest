@@ -16,6 +16,8 @@ struct cute_mmap_ctx {
     long long id;
     size_t size;
     void *addr;
+    char file_path[8192];
+    int line_nr;
     struct cute_mmap_ctx *next;
 };
 

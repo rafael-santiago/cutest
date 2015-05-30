@@ -159,7 +159,7 @@ void cute_log_memory_leak() {
     size_t leak_total = 0;
     cute_log("\n\ncute INTERNAL ERROR: Memory leak(s) detected!!\n\n>>>\n");
     for (mp = g_cute_mmap; mp != NULL; mp = mp->next) {
-        cute_log("Id=%l Address=%m < ", mp->id, mp->addr);
+        cute_log("Id=%l Address=%m File=%s [The last check before leak was at line #%d] < ", mp->id, mp->addr, mp->file_path, mp->line_nr);
         for (a = 0; a < mp->size; a++) {
             if (isprint(((char *)mp->addr)[a])) {
                 cute_log("%c", ((char *)mp->addr)[a]);

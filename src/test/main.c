@@ -115,6 +115,27 @@ CUTE_TEST_CASE(cute_mmap_ctx_general_tests)
     del_cute_mmap_ctx(mmap);
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(leak_check_tests)
+    char *my_sloppy_allocation = NULL;
+    int *my_sloppy_int = NULL;
+    if (g_cute_leak_check == 0) {
+        g_cute_leak_check = 1;
+        my_sloppy_allocation = (char *) malloc(8192);
+        my_sloppy_int = (int *) malloc(sizeof(int));
+        CUTE_CHECK("g_cute_mmap == NULL", g_cute_mmap != NULL);
+        CUTE_CHECK("g_cute_mmap->addr != my_sloppy_allocation", g_cute_mmap->addr == my_sloppy_allocation);
+        CUTE_CHECK("g_cute_mmap->next == NULL", g_cute_mmap->next != NULL);
+        CUTE_CHECK("g_cute_mmap->next->addr != my_sloopy_int", g_cute_mmap->next->addr == my_sloppy_int);
+        CUTE_CHECK("g_cute_mmap->next->next != NULL", g_cute_mmap->next->next == NULL);
+        free(my_sloppy_allocation);
+        free(my_sloppy_int);
+        CUTE_CHECK("g_cute_mmap != NULL", g_cute_mmap == NULL);
+        g_cute_leak_check = 0;
+    } else {
+        cute_log("WARNING: Skipped test. Unable to run \"leak_check_tests\". You need to disable cute's memory leak check system in order to run this.\n");
+    }
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(entry)
     char *retval = get_test_decl_return();
     CUTE_CHECK_EQ("retval != NULL", retval, NULL);
@@ -124,6 +145,7 @@ CUTE_TEST_CASE(entry)
     CUTE_CHECK_EQ("g_counter != 2", g_counter, 2);
     CUTE_RUN_TEST(CUTE_GET_OPTION_MACRO_test);
     CUTE_RUN_TEST(cute_mmap_ctx_general_tests);
+    CUTE_RUN_TEST(leak_check_tests);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(entry)

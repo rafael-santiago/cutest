@@ -10,10 +10,15 @@
 #include <string.h>
 #include <pthread.h>
 
-#define new_cute_mmap_ctx(m) ( g_cute_leak_check = 0,\
+static int g_temp_cute_leak_check = 0;
+
+#define new_cute_mmap_ctx(m) ( g_temp_cute_leak_check = g_cute_leak_check,\
+                               g_cute_leak_check = 0,\
                                (m) = malloc(sizeof(struct cute_mmap_ctx)),\
                                (m)->next = NULL,\
-                               g_cute_leak_check = 1 )
+                               (m)->line_nr = g_cute_last_exec_line,\
+                               strncpy((m)->file_path, g_cute_last_ref_file, sizeof((m)->file_path)-1),\
+                               g_cute_leak_check = g_temp_cute_leak_check )
 
 pthread_mutex_t mmap_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -80,12 +85,14 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
 
 void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
     struct cute_mmap_ctx *p = NULL, *t = NULL;
+    int temp = 0;
     pthread_mutex_lock(&mmap_mutex);
+    temp = g_cute_leak_check;
     g_cute_leak_check = 0;
     for (t = p = mmap; t != NULL; p = t) {
         t = p->next;
         free(p);
     }
-    g_cute_leak_check = 1;
+    g_cute_leak_check = temp;
     pthread_mutex_unlock(&mmap_mutex);
 }

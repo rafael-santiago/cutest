@@ -5,7 +5,7 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#include "cute_mem.h"
+#include "cute_memory.h"
 #include "cute.h"
 #include "cute_mmap.h"
 #include <dlfcn.h>
