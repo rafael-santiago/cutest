@@ -164,3 +164,33 @@ Note that the options should be passed in this form to your test binary:
 ``somewhere/over/the/rainbow/your-test --foobar=option-with-content --flag-option``
 
 When you try to read an unknown option the return is always ``NULL`` and ``flag options`` always return ``"1"``.
+
+## Detection memory leaks
+
+Firstly be aware that the [``valgrind``](https://www.valgrind.org) usage is the best way to catch this kind of [raptors](https://xkcd.com/292/) inside your code. However ``cute`` brings a minimal system that performs memory leak detection. It could be a profitable way to detect this kind of issue as soon as possible. Because you will be looking for memory leaks being still on the test phase.
+
+The usage of this system must be flagged passing the option ``--cute-leak-check`` to your unit test binary. Something like:
+
+``something/leaking/over/the/rainbow/your-test --cute-leak-check``
+
+When some memory leak is detected a report about this issue is include at the end of your general test report and the test binary exits with no zeroed ``exit code``.
+
+The format of this memory leak report is as follows:
+
+        cute INTERNAL ERROR: Memory leak(s) detected!!
+
+        >>>
+        Id=4 Address=0x0804C008 File=/leak-sample/main.c [The last check before leak was at line #113] < leak bloody leak...o > 20 byte(s).
+
+        Leak total: 20 byte(s).
+        <<<
+
+The report includes:
+
+- An allocation id.
+- The effective leak's initial memory address.
+- The file path where this leak is being caused.
+- The line number where was done the last test assertion before leak.
+- A content listing from this memory address and how many bytes are leaking.
+
+In the end is also included a sum of all detected leaks.
