@@ -124,8 +124,10 @@ CUTE_TEST_CASE(leak_check_tests)
         my_sloppy_int = (int *) malloc(sizeof(int));
         CUTE_CHECK("g_cute_mmap == NULL", g_cute_mmap != NULL);
         CUTE_CHECK("g_cute_mmap->addr != my_sloppy_allocation", g_cute_mmap->addr == my_sloppy_allocation);
+        CUTE_CHECK("g_cute_mmap->size != 8192", g_cute_mmap->size == 8192);
         CUTE_CHECK("g_cute_mmap->next == NULL", g_cute_mmap->next != NULL);
         CUTE_CHECK("g_cute_mmap->next->addr != my_sloopy_int", g_cute_mmap->next->addr == my_sloppy_int);
+        CUTE_CHECK("g_cute_mmap->next->size != sizeof(int)", g_cute_mmap->next->size == sizeof(int));
         CUTE_CHECK("g_cute_mmap->next->next != NULL", g_cute_mmap->next->next == NULL);
         free(my_sloppy_allocation);
         free(my_sloppy_int);
