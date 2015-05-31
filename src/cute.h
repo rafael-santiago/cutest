@@ -14,10 +14,18 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "cute_memory.h"
 #include "cute_mmap.h"
 
-#define CUTE_CHECK(msg, chk) do { g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__; if ((chk) == 0) { cute_log("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); cute_close_log_fd(); return msg; } } while (0)
+#define CUTE_PASSED_LABEL "passed"
+
+#define CUTE_FAILED_LABEL "failed"
+
+#define CUTE_CHECK(msg, chk) do { g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__; g_cute_test_status = CUTE_PASSED_LABEL; if ((chk) == 0) { g_cute_test_status = CUTE_FAILED_LABEL; g_cute_assertion_message = msg; cute_log("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); cute_close_log_fd(); return msg; } } while (0)
 
 #define CUTE_CHECK_EQ(msg, a, b) CUTE_CHECK(msg, (a) == (b))
 
@@ -32,21 +40,25 @@
 #define CUTE_CHECK_GEQ(msg, a, b) CUTE_CHECK(msg, (a) >= (b))
 
 #define CUTE_RUN_TEST(test) do {\
-                            cute_log("-- running %s...\n", #test);\
+                            if (g_cute_user_template[0] == 0) cute_log("-- running %s...\n", #test);\
                             g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__;\
+                            g_cute_test_name = #test;\
+                            g_cute_test_status = NULL;\
                             char *msg = test();\
                             g_cute_ran_tests++;\
-                            if (msg != NULL) return msg;\
+                            if (msg != NULL) { g_cute_test_status = CUTE_FAILED_LABEL; return msg; }\
+                            g_cute_test_status = CUTE_PASSED_LABEL;\
                             cute_log("-- passed.\n");\
                          } while (0)
 
 #define CUTE_RUN_TEST_WITH_FIXTURE(test) do {\
                             g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__;\
+                            g_cute_test_name = #test;\
                             g_cute_fixture_setup = test ## _setup;\
                             g_cute_fixture_teardown = test ## _teardown;\
                             test ## _setup();\
                             g_cute_fixture_setup = NULL;\
-                            cute_log("-- running %s...\n", #test);\
+                            if (g_cute_user_template[0] == 0) cute_log("-- running %s...\n", #test);\
                             char *msg = test();\
                             g_cute_ran_tests++;\
                             test ## _teardown();\
@@ -60,7 +72,32 @@
                                         CUTE_RUN_TEST(test);\
                                      } } while (0)
 
-#define CUTE_RUN(entry) do { char *entry_return = entry(); if (entry_return == NULL) cute_log("*** all tests passed. [%d test(s) ran]\n", g_cute_ran_tests); else { cute_log("*** fail: %s [%d test(s) ran]\n", entry_return, g_cute_ran_tests); cute_close_log_fd(); return 1; } } while(0);
+#define CUTE_RUN(entry) do {\
+                            char *entry_return = entry();\
+                            if (entry_return == NULL) {\
+                                cute_set_log_template(NULL);\
+                                user_template = cute_get_option("cute-test-log-footer", argc, argv, NULL);\
+                                if (user_template != NULL) {\
+                                    cute_set_log_template(user_template);\
+                                    cute_log("");\
+                                }\
+                                if (g_cute_user_template[0] == 0) {\
+                                    cute_log("*** all tests passed. [%d test(s) ran]\n", g_cute_ran_tests);\
+                                }\
+                            } else {\
+                                cute_close_log_fd();\
+                                cute_set_log_template(NULL);\
+                                user_template = cute_get_option("cute-test-log-footer", argc, argv, NULL);\
+                                if (user_template != NULL) {\
+                                    cute_set_log_template(user_template);\
+                                    cute_log("");\
+                                    cute_set_log_template(NULL);\
+                                } else {\
+                                    cute_log("*** fail: %s [%d test(s) ran]\n", entry_return, g_cute_ran_tests);\
+                                }\
+                                return 1;\
+                            }\
+                        } while(0);
 
 #define CUTE_TEST_CASE(test) char *test() {
 
@@ -95,6 +132,7 @@
                          }\
                          int main(int argc, char **argv) {\
                           char *logpath = NULL;\
+                          char *user_template = NULL;\
                           int exit_code = 0;\
                           signal(SIGSEGV, sigsegv_watchdog);\
                           signal(SIGBUS, sigsegv_watchdog);\
@@ -110,6 +148,16 @@
                           g_cute_argc = argc;\
                           if (logpath != NULL) {\
                            cute_open_log_fd(logpath);\
+                          }\
+                          user_template = cute_get_option("cute-test-log-header", argc, argv, NULL);\
+                          if (user_template != NULL) {\
+                           cute_set_log_template(user_template);\
+                           cute_log("");\
+                           cute_set_log_template(NULL);\
+                          }\
+                          user_template = cute_get_option("cute-test-log-detail", argc, argv, NULL);\
+                          if (user_template != NULL) {\
+                           cute_set_log_template(user_template);\
                           }\
                           CUTE_RUN(entry);\
                           if (g_cute_leak_check && g_cute_mmap != NULL) {\
@@ -145,6 +193,20 @@ extern char *g_cute_last_ref_file;
 
 extern struct cute_mmap_ctx *g_cute_mmap;
 
+extern char *g_cute_test_status;
+
+extern char *g_cute_test_name;
+
+extern char *g_cute_test_log_header;
+
+extern char *g_cute_test_log_detail;
+
+extern char *g_cute_test_log_footer;
+
+extern char g_cute_user_template[0xffff];
+
+extern char *g_cute_assertion_message;
+
 void cute_open_log_fd(const char *filepath);
 
 void cute_close_log_fd();
@@ -154,5 +216,11 @@ void cute_log(const char *msg, ...);
 char *cute_get_option(const char *option, int argc, char **argv, char *default_value);
 
 void cute_log_memory_leak();
+
+void cute_set_log_template(const char *template_file_path);
+
+#if __cplusplus
+}
+#endif
 
 #endif

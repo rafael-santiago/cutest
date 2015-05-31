@@ -10,6 +10,10 @@
 
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void *calloc(size_t nmemb, size_t size);
 
 void *malloc(size_t size);
@@ -19,5 +23,9 @@ void free(void *ptr);
 void *realloc(void *ptr, size_t size);
 
 void init_memory_func_ptr();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -10,6 +10,10 @@
 
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 static long long g_cute_mmap_id = 0;
 
 struct cute_mmap_ctx {
@@ -29,5 +33,8 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
 
 void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

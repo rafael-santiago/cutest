@@ -33,6 +33,73 @@ char *g_cute_last_ref_file = NULL;
 
 struct cute_mmap_ctx *g_cute_mmap = NULL;
 
+char *g_cute_test_status = "idle";
+
+char *g_cute_test_name = "(null)";
+
+char g_cute_user_template[0xffff];
+
+char *g_cute_assertion_message = NULL;
+
+enum {
+    kInt,
+    kStr
+};
+
+struct cute_vars_ctx {
+    char *vname;
+    void *(*get)();
+    int   dtype;
+};
+
+static void *get_file() {
+    return &g_cute_last_ref_file[0];
+}
+
+static void *get_line() {
+    return &g_cute_last_exec_line;
+}
+
+static void *get_status() {
+    return &g_cute_test_status[0];
+}
+
+static void *get_test_name() {
+    return &g_cute_test_name[0];
+}
+
+static void *get_ran_tests() {
+    return &g_cute_ran_tests;
+}
+
+static void *get_assertion_message() {
+    return &g_cute_assertion_message[0];
+}
+
+#define CUTE_VARS_NR 6
+
+static struct cute_vars_ctx cute_vars[CUTE_VARS_NR] = {
+    {              "FILE",              get_file, kStr},
+    {              "LINE",              get_line, kInt},
+    {            "STATUS",            get_status, kStr},
+    {              "TEST",         get_test_name, kStr},
+    {      "RAN_TESTS_NR",         get_ran_tests, kInt},
+    { "ASSERTION_MESSAGE", get_assertion_message, kStr}
+};
+
+static ssize_t get_cute_var_data(const char *vname) {
+    size_t v = 0;
+    if (vname == NULL) {
+        return -1;
+    }
+    for (v = 0; v < CUTE_VARS_NR; v++) {
+        if (strcmp(cute_vars[v].vname, vname) == 0) {
+            return v;
+        }
+    }
+    return -1;
+}
+
 void cute_open_log_fd(const char *filepath) {
     cute_close_log_fd();
     g_cute_log_fd = fopen(filepath, "wb");
@@ -56,11 +123,20 @@ void cute_log(const char *msg, ...) {
     int should_log_to_stdout = (g_cute_log_fd == NULL);
     va_list val;
     long long l = 0;
+    char vname[0xff];
+    void *vdata = NULL;
+    size_t v = 0;
+    ssize_t vindex = -1;
+    const char *temp_mp = NULL;
+    char assertion_message[0xffff] = "";
     if (mp == NULL) {
         return;
     }
     if (should_log_to_stdout) {
         g_cute_log_fd = stdout;
+    }
+    if (g_cute_user_template[0] != 0) {
+        mp = (const char *) g_cute_user_template;
     }
     va_start(val, msg);
     while (*mp) {
@@ -120,6 +196,34 @@ void cute_log(const char *msg, ...) {
                     break;
             }
             mp++;
+        } else if (*mp == '$') {
+            mp++;
+            temp_mp = mp;
+            memset(vname, '\0', sizeof(vname));
+            for (v = 0; v < sizeof(vname) && (isalpha(*mp) || *mp == '_'); v++, mp++) {
+                vname[v] = *mp;
+            }
+            vindex = get_cute_var_data(vname);
+            if (vindex == -1 || cute_vars[vindex].get == NULL) {
+                fprintf(g_cute_log_fd, "$");
+                mp = temp_mp;
+                continue;
+            } else {
+                mp--;
+                if (cute_vars[vindex].dtype == kStr) {
+                    if (strcmp(vname, "ASSERTION_MESSAGE") != 0) {
+                        fprintf(g_cute_log_fd, "%s", (char *)cute_vars[vindex].get());
+                    } else {
+                        if (g_cute_test_status == NULL || strcmp(g_cute_test_status, CUTE_PASSED_LABEL) == 0) {
+                            fprintf(g_cute_log_fd, "-");
+                        } else {
+                            fprintf(g_cute_log_fd, (char *)cute_vars[vindex].get());
+                        }
+                    }
+                } else if (cute_vars[vindex].dtype == kInt) {
+                    fprintf(g_cute_log_fd, "%d", *(int *)cute_vars[vindex].get());
+                }
+            }
         } else {
             fprintf(g_cute_log_fd, "%c", *mp);
         }
@@ -171,4 +275,22 @@ void cute_log_memory_leak() {
         leak_total += mp->size;
     }
     cute_log("\nLeak total: %d byte(s).\n<<<\n", leak_total);
+}
+
+void cute_set_log_template(const char *template_file_path) {
+    FILE *fp = NULL;
+    long file_size = 0;
+    memset(g_cute_user_template, 0, sizeof(g_cute_user_template));
+    if (template_file_path == NULL) {
+        return;
+    }
+    fp = fopen(template_file_path, "rb");
+    if (fp == NULL) {
+        return;
+    }
+    fseek(fp, 0L, SEEK_END);
+    file_size = ftell(fp);
+    fseek(fp, 0L, SEEK_SET);
+    fread(g_cute_user_template, 1, sizeof(g_cute_user_template) - 1, fp);
+    fclose(fp);
 }
