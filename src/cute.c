@@ -33,6 +33,8 @@ char *g_cute_last_ref_file = NULL;
 
 struct cute_mmap_ctx *g_cute_mmap = NULL;
 
+struct cute_mmap_ctx *g_mp = NULL;
+
 char *g_cute_test_status = "idle";
 
 char *g_cute_test_name = "(null)";
@@ -41,9 +43,36 @@ char g_cute_user_template[0xffff];
 
 char *g_cute_assertion_message = NULL;
 
+static void *get_file();
+
+static void *get_line();
+
+static void *get_status();
+
+static void *get_test_name();
+
+static void *get_ran_tests();
+
+static void *get_assertion_message();
+
+static void *get_leak_id();
+
+static void *get_leak_addr();
+
+static void *get_leak_file_path();
+
+static void *get_leak_line();
+
+static void *get_leak_size();
+
+static ssize_t get_cute_var_data(const char *vname);
+
 enum {
     kInt,
-    kStr
+    kStr,
+    kRaw,
+    kAddr,
+    kSize
 };
 
 struct cute_vars_ctx {
@@ -76,15 +105,41 @@ static void *get_assertion_message() {
     return &g_cute_assertion_message[0];
 }
 
-#define CUTE_VARS_NR 6
+static void *get_leak_id() {
+    return &g_mp->id;
+}
+
+static void *get_leak_addr() {
+    return g_mp->addr;
+}
+
+static void *get_leak_file_path() {
+    return &g_mp->file_path[0];
+}
+
+static void *get_leak_line() {
+    return &g_mp->line_nr;
+}
+
+static void *get_leak_size() {
+    return &g_mp->size;
+}
+
+#define CUTE_VARS_NR 12
 
 static struct cute_vars_ctx cute_vars[CUTE_VARS_NR] = {
-    {              "FILE",              get_file, kStr},
-    {              "LINE",              get_line, kInt},
-    {            "STATUS",            get_status, kStr},
-    {              "TEST",         get_test_name, kStr},
-    {      "RAN_TESTS_NR",         get_ran_tests, kInt},
-    { "ASSERTION_MESSAGE", get_assertion_message, kStr}
+    {              "FILE",              get_file,   kStr},
+    {              "LINE",              get_line,   kInt},
+    {            "STATUS",            get_status,   kStr},
+    {              "TEST",         get_test_name,   kStr},
+    {      "RAN_TESTS_NR",         get_ran_tests,   kInt},
+    { "ASSERTION_MESSAGE", get_assertion_message,   kStr},
+    {           "LEAK_ID",           get_leak_id,   kInt},
+    {         "LEAK_ADDR",         get_leak_addr,  kAddr},
+    {    "LEAK_FILE_PATH",    get_leak_file_path,   kStr},
+    {         "LEAK_LINE",         get_leak_line,   kInt},
+    {         "LEAK_DATA",         get_leak_addr,   kRaw},
+    {         "LEAK_SIZE",         get_leak_size,   kInt}
 };
 
 static ssize_t get_cute_var_data(const char *vname) {
@@ -126,6 +181,7 @@ void cute_log(const char *msg, ...) {
     char vname[0xff];
     void *vdata = NULL;
     size_t v = 0;
+    size_t a = 0;
     ssize_t vindex = -1;
     const char *temp_mp = NULL;
     char assertion_message[0xffff] = "";
@@ -210,18 +266,40 @@ void cute_log(const char *msg, ...) {
                 continue;
             } else {
                 mp--;
-                if (cute_vars[vindex].dtype == kStr) {
-                    if (strcmp(vname, "ASSERTION_MESSAGE") != 0) {
-                        fprintf(g_cute_log_fd, "%s", (char *)cute_vars[vindex].get());
-                    } else {
-                        if (g_cute_test_status == NULL || strcmp(g_cute_test_status, CUTE_PASSED_LABEL) == 0) {
-                            fprintf(g_cute_log_fd, "-");
+                switch (cute_vars[vindex].dtype) {
+
+                    case kStr:
+                        if (strcmp(vname, "ASSERTION_MESSAGE") != 0) {
+                            fprintf(g_cute_log_fd, "%s", (char *)cute_vars[vindex].get());
                         } else {
-                            fprintf(g_cute_log_fd, (char *)cute_vars[vindex].get());
+                            if (g_cute_test_status == NULL || strcmp(g_cute_test_status, CUTE_PASSED_LABEL) == 0) {
+                                fprintf(g_cute_log_fd, "-");
+                            } else {
+                                fprintf(g_cute_log_fd, (char *)cute_vars[vindex].get());
+                            }
                         }
-                    }
-                } else if (cute_vars[vindex].dtype == kInt) {
-                    fprintf(g_cute_log_fd, "%d", *(int *)cute_vars[vindex].get());
+                        break;
+
+                    case kInt:
+                        fprintf(g_cute_log_fd, "%d", *(int *)cute_vars[vindex].get());
+                        break;
+
+                    case kRaw:
+                        vdata = cute_vars[vindex].get();
+                        for (a = 0; a < g_mp->size; a++) {
+                            if (isprint(((char *)vdata)[a])) {
+                                fprintf(g_cute_log_fd, "%c", ((char *)vdata)[a]);
+                            } else {
+                                fprintf(g_cute_log_fd, ".");
+                            }
+                        }
+                        break;
+
+                    case kAddr:
+                        vdata = cute_vars[vindex].get();
+                        fprintf(g_cute_log_fd, sizeof(void *) == 4 ? "0x%.8X" : "0x%.16X", vdata);
+                        break;
+
                 }
             }
         } else {
@@ -259,22 +337,50 @@ char *cute_get_option(const char *option, int argc, char **argv, char *default_v
 
 void cute_log_memory_leak() {
     struct cute_mmap_ctx *mp;
+    char *template_path = NULL;
     size_t a = 0;
     size_t leak_total = 0;
-    cute_log("\n\ncute INTERNAL ERROR: Memory leak(s) detected!!\n\n>>>\n");
+    template_path = cute_get_option("cute-leak-log-header", g_cute_argc, g_cute_argv, NULL);
+    if (template_path == NULL) {
+        cute_log("\n\ncute INTERNAL ERROR: Memory leak(s) detected!!\n\n>>>\n");
+    } else {
+        cute_set_log_template(template_path);
+        cute_log("");
+        cute_set_log_template(NULL);
+    }
+    template_path = cute_get_option("cute-leak-log-detail", g_cute_argc, g_cute_argv, NULL);
+    if (template_path != NULL) {
+        cute_set_log_template(template_path);
+    }
     for (mp = g_cute_mmap; mp != NULL; mp = mp->next) {
-        cute_log("Id=%l Address=%m File=%s [The last check before leak was at line #%d] < ", mp->id, mp->addr, mp->file_path, mp->line_nr);
-        for (a = 0; a < mp->size; a++) {
-            if (isprint(((char *)mp->addr)[a])) {
-                cute_log("%c", ((char *)mp->addr)[a]);
-            } else {
-                cute_log(".");
+        if (template_path == NULL) {
+            cute_log("Id=%l Address=%m File=%s [The last check before leak was at line #%d] < ", mp->id, mp->addr, mp->file_path, mp->line_nr);
+            for (a = 0; a < mp->size; a++) {
+                if (isprint(((char *)mp->addr)[a])) {
+                    cute_log("%c", ((char *)mp->addr)[a]);
+                } else {
+                    cute_log(".");
+                }
             }
+            cute_log(" > %d byte(s).\n", mp->size);
+        } else {
+            g_mp = mp;
+            cute_log("");
+            g_mp = NULL;
         }
-        cute_log(" > %d byte(s).\n", mp->size);
         leak_total += mp->size;
     }
-    cute_log("\nLeak total: %d byte(s).\n<<<\n", leak_total);
+    if (template_path != NULL) {
+        cute_set_log_template(NULL);
+    }
+    template_path = cute_get_option("cute-leak-log-footer", g_cute_argc, g_cute_argv, NULL);
+    if (template_path == NULL) {
+        cute_log("\nLeak total: %d byte(s).\n<<<\n", leak_total);
+    } else {
+        cute_set_log_template(template_path);
+        cute_log("");
+        cute_set_log_template(NULL);
+    }
 }
 
 void cute_set_log_template(const char *template_file_path) {

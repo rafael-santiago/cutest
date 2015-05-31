@@ -39,7 +39,7 @@ example:
 	    CUTE_CHECK("0 == 1!!", 1 != 0);
 	CUTE_TEST_CASE_END
 
-The example below will break if for some reason one be equals to zero. In this case the error message
+The example above will break if for some reason one be equals to zero. In this case the error message
 passed as first argument will be shown. The second argument is the logical test assertion.
 
 If your ``test-case`` needs fixtures you must declare the fixtures using the following schemas:
