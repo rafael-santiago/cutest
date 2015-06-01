@@ -23,6 +23,8 @@ int g_cute_argc = 0;
 
 int g_cute_leak_check = 0;
 
+int g_leak_sum = 0;
+
 void (*g_cute_fixture_setup)() = NULL;
 
 void (*g_cute_fixture_teardown)() = NULL;
@@ -64,6 +66,8 @@ static void *get_leak_file_path();
 static void *get_leak_line();
 
 static void *get_leak_size();
+
+static void *get_leak_sum();
 
 static ssize_t get_cute_var_data(const char *vname);
 
@@ -125,7 +129,11 @@ static void *get_leak_size() {
     return &g_mp->size;
 }
 
-#define CUTE_VARS_NR 12
+static void *get_leak_sum() {
+    return &g_leak_sum;
+}
+
+#define CUTE_VARS_NR 13
 
 static struct cute_vars_ctx cute_vars[CUTE_VARS_NR] = {
     {              "FILE",              get_file,   kStr},
@@ -139,7 +147,8 @@ static struct cute_vars_ctx cute_vars[CUTE_VARS_NR] = {
     {    "LEAK_FILE_PATH",    get_leak_file_path,   kStr},
     {         "LEAK_LINE",         get_leak_line,   kInt},
     {         "LEAK_DATA",         get_leak_addr,   kRaw},
-    {         "LEAK_SIZE",         get_leak_size,   kInt}
+    {         "LEAK_SIZE",         get_leak_size,   kInt},
+    {          "LEAK_SUM",          get_leak_sum,   kInt}
 };
 
 static ssize_t get_cute_var_data(const char *vname) {
@@ -344,6 +353,10 @@ void cute_log_memory_leak() {
     if (template_path == NULL) {
         cute_log("\n\ncute INTERNAL ERROR: Memory leak(s) detected!!\n\n>>>\n");
     } else {
+        g_leak_sum = 0;
+        for (mp = g_cute_mmap; mp != NULL; mp = mp->next) {
+            g_leak_sum += mp->size;
+        }
         cute_set_log_template(template_path);
         cute_log("");
         cute_set_log_template(NULL);
