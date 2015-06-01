@@ -9,6 +9,7 @@
 #include "cute.h"
 #include <string.h>
 #include <pthread.h>
+#include <signal.h>
 
 static int g_temp_cute_leak_check = 0;
 
@@ -49,6 +50,9 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
     p->id = ++g_cute_mmap_id;
     p->size = size;
     p->addr = addr;
+    if (p->id == g_cute_leak_id) {
+	raise(SIGTRAP);
+    }
     pthread_mutex_unlock(&mmap_mutex);
     return head;
 }

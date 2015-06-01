@@ -45,6 +45,8 @@ char g_cute_user_template[0xffff];
 
 char *g_cute_assertion_message = NULL;
 
+int g_cute_leak_id = 0;
+
 static void *get_file();
 
 static void *get_line();

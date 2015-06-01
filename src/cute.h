@@ -133,6 +133,7 @@ extern "C" {
                          int main(int argc, char **argv) {\
                           char *logpath = NULL;\
                           char *user_template = NULL;\
+                          char *leak_id = NULL;\
                           int exit_code = 0;\
                           signal(SIGSEGV, sigsegv_watchdog);\
                           signal(SIGBUS, sigsegv_watchdog);\
@@ -143,6 +144,10 @@ extern "C" {
                           logpath = cute_get_option("cute-log-path", argc, argv, NULL);\
                           if (cute_get_option("cute-leak-check", argc, argv, NULL) != NULL) {\
                            g_cute_leak_check = 1;\
+                          }\
+                          leak_id = cute_get_option("cute-leak-id", argc, argv, NULL);\
+                          if (leak_id != NULL) {\
+                           g_cute_leak_id = atoi(leak_id);\
                           }\
                           g_cute_argv = argv;\
                           g_cute_argc = argc;\
@@ -206,6 +211,8 @@ extern char *g_cute_test_log_footer;
 extern char g_cute_user_template[0xffff];
 
 extern char *g_cute_assertion_message;
+
+extern int g_cute_leak_id;
 
 void cute_open_log_fd(const char *filepath);
 
