@@ -204,6 +204,8 @@ It is possible to custom the test logs. Cute divide the log in three parts which
 There are three options that you need to pass to your test binary if you intend to modify the log layout. Table 1 summarizes
 these options.
 
+**Table 1**: The ``test-log`` options.
+
 |          **Option**        |               **Receives**                  |
 |:--------------------------:|--------------------------------------------:|
 | ``--cute-test-log-header`` | a file path pointing to the header template |
@@ -213,6 +215,8 @@ these options.
 Into the layout goes the specific tokens related with the chosen format well as the variables that belongs relevant info about the logged process.
 
 Table 2 brings a listing of these variables and what they represent.
+
+**Table 2**: The ``test-log`` recognized variables.
 
 |        **Variable**        |          **Represents**                    |
 |:--------------------------:|-------------------------------------------:|
@@ -226,12 +230,14 @@ Table 2 brings a listing of these variables and what they represent.
 Following you can see test template samples.
 
 Here goes the log ``header``:
+        <code>
         <!-- test-log-header.html -->
         <html>
             <title>Log template sample</title>
             <h1>Unit test results</h1>
             <table>
                 <tr><td><b>Test name</b></td><td><b>Result</b></td><td><b>Message</b></td></tr>
+        </code>
 
 now the ``detail``...
 
@@ -252,6 +258,8 @@ To use these templates you must to indicated them by command line in this follow
 ### Customizing the memory leak report
 
 It is possible too. The Table 3 brings all variables recognized by this kind of template.
+
+**Table 3**: The ``leak-log`` recognized variables.
 
 |          **Variable**             |                     **Represents**                              |
 |:---------------------------------:|----------------------------------------------------------------:|
