@@ -20,6 +20,8 @@ static void *(*tru_free)(void *) = NULL;
 
 static void *(*tru_realloc)(void *, size_t) = NULL;
 
+static int g_memhook_init_done = 0;
+
 void init_memory_func_ptr() {
 #ifndef _WIN32
     void *handle = (void *)-1;
@@ -27,6 +29,7 @@ void init_memory_func_ptr() {
     tru_malloc = (void *)dlsym(handle, "malloc");
     tru_free = (void *)dlsym(handle, "free");
     tru_realloc = (void *)dlsym(handle, "realloc");
+    g_memhook_init_done = 1;
 #endif
 }
 
@@ -35,7 +38,9 @@ void init_memory_func_ptr() {
 void *calloc(size_t nmemb, size_t size) {
     void *retval = NULL;
     if (tru_calloc == NULL) {
-        cute_log("libcute INTERNAL ERROR: null tru_calloc().");
+	if (g_memhook_init_done) {
+	    cute_log("libcute INTERNAL ERROR: null tru_calloc().");
+	}
         return NULL;
     }
     retval = tru_calloc(nmemb, size);
@@ -48,7 +53,9 @@ void *calloc(size_t nmemb, size_t size) {
 void *malloc(size_t size) {
     void *retval = NULL;
     if (tru_malloc == NULL) {
-        cute_log("libcute INTERNAL ERROR: null tru_malloc().");
+	if (g_memhook_init_done) {
+	    cute_log("libcute INTERNAL ERROR: null tru_malloc().");
+	}
         return NULL;
     }
     retval = tru_malloc(size);
@@ -60,7 +67,9 @@ void *malloc(size_t size) {
 
 void free(void *ptr) {
     if (tru_free == NULL) {
-        cute_log("libcute INTERNAL ERROR: null tru_free().");
+	if (g_memhook_init_done) {
+	    cute_log("libcute INTERNAL ERROR: null tru_free().");
+	}
         return;
     }
     if (g_cute_leak_check) {
@@ -72,7 +81,9 @@ void free(void *ptr) {
 void *realloc(void *ptr, size_t size) {
     void *retval = NULL;
     if (tru_realloc == NULL) {
-        cute_log("libcute INTERNAL ERROR: null tru_realloc().");
+	if (g_memhook_init_done) {
+	    cute_log("libcute INTERNAL ERROR: null tru_realloc().");
+	}
         return NULL;
     }
     retval = tru_realloc(ptr, size);
