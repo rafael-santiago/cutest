@@ -60,7 +60,7 @@ If your ``test-case`` needs fixtures you must declare the fixtures using the fol
             CUTE_RUN_TEST_WITH_FIXTURE(my_test_case); // the test invocation macro differs from tests that do not have fixtures.
         CUTE_TEST_CASE_END
 
-Tests with fixtures must defined the both fixtures, the setup and the teardown, otherwise you will get errors related with unresolved externals.
+Tests with fixtures must define the both fixtures, the setup and the teardown, otherwise you will get errors related with unresolved externals.
 
 ## Available assertion macros
 
@@ -172,7 +172,7 @@ The usage of this system must be flagged passing the option ``--cute-leak-check`
 
 ``something/leaking/over/the/rainbow/your-test --cute-leak-check``
 
-When some memory leak is detected a report about this issue is include at the end of your general test report and the test binary exits with no zeroed ``exit code``.
+When some memory leak is detected a report about this issue is included at the end of your general test report and the test binary exits with no zeroed ``exit code``.
 
 The format of this memory leak report is as follows:
 
