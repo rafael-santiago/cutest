@@ -230,14 +230,13 @@ Table 2 brings a listing of these variables and what they represent.
 Following you can see test template samples.
 
 Here goes the log ``header``:
-        <code>
+
         <!-- test-log-header.html -->
-        <html>
-            <title>Log template sample</title>
-            <h1>Unit test results</h1>
-            <table>
-                <tr><td><b>Test name</b></td><td><b>Result</b></td><td><b>Message</b></td></tr>
-        </code>
+        <title>Log template sample</title>
+        <h1>Unit test results</h1>
+        <table>
+            <tr><td><b>Test name</b></td><td><b>Result</b></td><td><b>Message</b></td></tr>
+
 
 now the ``detail``...
 
