@@ -197,3 +197,72 @@ In the end is also included a sum of all detected leaks.
 
 The allocation id can be used in order to force a debug break. When you pass to your test binary the option ``--cute-leak-id=<allocation-id>`` a ``trap`` signal will be raised at the moment that the allocation id be equals to passed value.
 
+## Log customizing
+
+It is possible to custom the test logs. Cute divide the log in three parts which are: header, detail and footer.
+
+There are three options that you need to pass to your test binary if you intend to modify the log layout. Table 1 summarizes
+these options.
+
+|          **Option**        |               **Receives**                  |
+|:--------------------------:|--------------------------------------------:|
+| ``--cute-test-log-header`` | a file path pointing to the header template |
+| ``--cute-test-log-detail`` | a file path pointing to the detail template |
+| ``--cute-test-log-footer`` | a file path pointing to the footer template |
+
+Into the layout goes the specific tokens related with the chosen format well as the variables that belongs relevant info about the logged process.
+
+Table 2 brings a listing of these variables and what they represent.
+
+|        **Variable**        |          **Represents**                    |
+|:--------------------------:|-------------------------------------------:|
+|        ``$FILE``           | the test file path                         |
+|        ``$LINE``           | the test file line number                  |
+|       ``$STATUS``          | the test status (``passed`` or ``failed``) |
+|        ``$TEST``           | the test name                              |
+|    ``$RAN_TEST_NR``        | the ran tests amount                       |
+| ``$ASSERTION_MESSAGE``     | the user defined assertion message         |
+
+Following you can see test template samples.
+
+Here goes the log ``header``:
+        <!-- test-log-header.html -->
+        <html>
+            <title>Log template sample</title>
+            <h1>Unit test results</h1>
+            <table>
+                <tr><td><b>Test name</b></td><td><b>Result</b></td><td><b>Message</b></td></tr>
+
+now the ``detail``...
+
+        <!-- test-log-detail.html -->
+        <tr><td>$TEST in $FILE at $LINE</td><td>$STATUS</td><td>$ASSERTION_MESSAGE</td></tr>
+
+and then the ``footer``.
+
+            <!-- test-log-footer -->
+            </table>
+            <b>Total tests executed</b>: $RAN_TESTS_NR
+        </html>
+
+To use these templates you must to indicated them by command line in this following way:
+
+``somewhere/over/the/rainbow/your-test --cute-test-log-header=templates/test-log-header.html --cute-test-log-detail=templates/test-log-detail.html --cute-test-log-footer=templates/test-log-footer.html``
+
+### Customizing the memory leak report
+
+It is possible too. The Table 3 brings all variables recognized by this kind of template.
+
+|          **Variable**             |                     **Represents**                              |
+|:---------------------------------:|----------------------------------------------------------------:|
+|          ``$LEAK_ID``             | the leak id                                                     |
+|         ``$LEAK_ADDR``            | the start leak memory address                                   |
+|       ``$LEAK_FILE_PATH``         | the file path where the leak is occurring                       |
+|         ``$LEAK_LINE``            | the file line number of the last test assertion before the leak |
+|         ``$LEAK_DATA``            | the data which is leaking                                       |
+|         ``$LEAK_SIZE``            | the size of leak                                                |
+|         ``$LEAK_SUM``             | the total (in bytes) that is leaking                            |
+
+Similar the test log custom you need to pass the options specifying the file path of ``header``, ``detail`` and ``footer``.
+These options are respectively: ``--cute-leak-log-header``, ``--cute-leak-log-detail`` and ``--cute-leak-log-footer``.
+
