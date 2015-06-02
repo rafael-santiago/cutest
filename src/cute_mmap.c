@@ -21,9 +21,14 @@ static int g_temp_cute_leak_check = 0;
                                strncpy((m)->file_path, g_cute_last_ref_file, sizeof((m)->file_path)-1),\
                                g_cute_leak_check = g_temp_cute_leak_check )
 
+#ifndef _WIN32
+							   
 pthread_mutex_t mmap_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-static struct cute_mmap_ctx *get_cute_mmap_ctx_tail(struct cute_mmap_ctx *mmap) {
+#endif
+
+static struct cute_mmap_ctx *get_cute_mmap_ctx_tail(struct cute_mmap_ctx *mmap) {	
+#ifndef _WIN32
     struct cute_mmap_ctx *p;
     if (mmap == NULL) {
         return NULL;
@@ -31,10 +36,14 @@ static struct cute_mmap_ctx *get_cute_mmap_ctx_tail(struct cute_mmap_ctx *mmap) 
     for (p = mmap; p->next != NULL; p = p->next)
          ;
     return p;
+#else
+	return NULL;
+#endif
 }
 
 struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap,
                                                       size_t size, void *addr) {
+#ifndef _WIN32
     struct cute_mmap_ctx *head = NULL;
     struct cute_mmap_ctx *p = NULL;
     pthread_mutex_lock(&mmap_mutex);
@@ -53,12 +62,16 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
     if (p->id == g_cute_leak_id) {
 	raise(SIGTRAP);
     }
-    pthread_mutex_unlock(&mmap_mutex);
+    pthread_mutex_unlock(&mmap_mutex);	
     return head;
+#else
+	return NULL;
+#endif
 }
 
 struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mmap,
                                                        void *addr) {
+#ifndef _WIN32
     struct cute_mmap_ctx *head = NULL;
     struct cute_mmap_ctx *burn = NULL;
     struct cute_mmap_ctx *last = NULL;
@@ -85,9 +98,13 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
     }
     pthread_mutex_unlock(&mmap_mutex);
     return head;
+#else
+	return NULL;
+#endif
 }
 
 void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
+#ifndef _WIN32
     struct cute_mmap_ctx *p = NULL, *t = NULL;
     int temp = 0;
     pthread_mutex_lock(&mmap_mutex);
@@ -99,4 +116,5 @@ void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
     }
     g_cute_leak_check = temp;
     pthread_mutex_unlock(&mmap_mutex);
+#endif
 }

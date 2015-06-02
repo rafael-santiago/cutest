@@ -10,7 +10,9 @@
 
 #include <stdio.h>
 #include <signal.h>
+#ifndef _WIN32
 #include <execinfo.h>
+#endif
 #include <unistd.h>
 #include <stdlib.h>
 
@@ -110,6 +112,8 @@ extern "C" {
 
 #define CUTE_FIXTURE_TEARDOWN(test) void test ## _teardown() {
 
+#ifndef _WIN32
+
 #define CUTE_MAIN(entry) void sigint_watchdog(int signum) {\
                           printf("-- CUTE INT TRAP --\n");\
                           if (g_cute_fixture_teardown != NULL) {\
@@ -174,6 +178,69 @@ extern "C" {
                           return exit_code;\
                          }
 
+#else
+
+#define CUTE_MAIN(entry) void sigint_watchdog(int signum) {\
+                          printf("-- CUTE INT TRAP --\n");\
+                          if (g_cute_fixture_teardown != NULL) {\
+                           g_cute_fixture_teardown();\
+                           g_cute_fixture_teardown = NULL;\
+                          }\
+                         }\
+                         void sigsegv_watchdog(int signum) {\
+                          size_t size;\
+                          void *array[50];\
+                          printf("-- CUTE PANIC TRAP --\n");\
+                          if (g_cute_last_exec_line > -1) {\
+                           printf("\n< The last successfully executed line was the line #%d from file \"%s\" >", g_cute_last_exec_line, g_cute_last_ref_file);\
+                          }\
+                          exit(1);\
+                         }\
+                         int main(int argc, char **argv) {\
+                          char *logpath = NULL;\
+                          char *user_template = NULL;\
+                          char *leak_id = NULL;\
+                          int exit_code = 0;\
+                          signal(SIGSEGV, sigsegv_watchdog);\
+                          signal(SIGABRT, sigsegv_watchdog);\
+                          signal(SIGINT, sigint_watchdog);\
+                          signal(SIGTERM, sigint_watchdog);\
+                          init_memory_func_ptr();\
+                          logpath = cute_get_option("cute-log-path", argc, argv, NULL);\
+                          if (cute_get_option("cute-leak-check", argc, argv, NULL) != NULL) {\
+                           g_cute_leak_check = 1;\
+                          }\
+                          leak_id = cute_get_option("cute-leak-id", argc, argv, NULL);\
+                          if (leak_id != NULL) {\
+                           g_cute_leak_id = atoi(leak_id);\
+                          }\
+                          g_cute_argv = argv;\
+                          g_cute_argc = argc;\
+                          if (logpath != NULL) {\
+                           cute_open_log_fd(logpath);\
+                          }\
+                          user_template = cute_get_option("cute-test-log-header", argc, argv, NULL);\
+                          if (user_template != NULL) {\
+                           cute_set_log_template(user_template);\
+                           cute_log("");\
+                           cute_set_log_template(NULL);\
+                          }\
+                          user_template = cute_get_option("cute-test-log-detail", argc, argv, NULL);\
+                          if (user_template != NULL) {\
+                           cute_set_log_template(user_template);\
+                          }\
+                          CUTE_RUN(entry);\
+                          if (g_cute_leak_check && g_cute_mmap != NULL) {\
+                           cute_log_memory_leak();\
+                           del_cute_mmap_ctx(g_cute_mmap);\
+                           exit_code = 1;\
+                          }\
+                          cute_close_log_fd();\
+                          return exit_code;\
+                         }
+	
+#endif
+						 
 #define CUTE_GET_OPTION(o) ( cute_get_option(o, g_cute_argc, g_cute_argv, NULL) )
 
 extern int g_cute_general_counter;

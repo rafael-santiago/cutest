@@ -146,8 +146,10 @@ CUTE_TEST_CASE(entry)
     CUTE_RUN_TEST_WITH_FIXTURE(fixture_test);
     CUTE_CHECK_EQ("g_counter != 2", g_counter, 2);
     CUTE_RUN_TEST(CUTE_GET_OPTION_MACRO_test);
+#ifndef _WIN32
     CUTE_RUN_TEST(cute_mmap_ctx_general_tests);
     CUTE_RUN_TEST(leak_check_tests);
+#endif
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(entry)

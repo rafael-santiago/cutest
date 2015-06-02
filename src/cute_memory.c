@@ -8,7 +8,9 @@
 #include "cute_memory.h"
 #include "cute.h"
 #include "cute_mmap.h"
+#ifndef _WIN32
 #include <dlfcn.h>
+#endif
 
 static void *(*tru_calloc)(size_t, size_t) = NULL;
 
@@ -19,12 +21,16 @@ static void *(*tru_free)(void *) = NULL;
 static void *(*tru_realloc)(void *, size_t) = NULL;
 
 void init_memory_func_ptr() {
+#ifndef _WIN32
     void *handle = (void *)-1;
     tru_calloc = (void *)dlsym(handle, "calloc");
     tru_malloc = (void *)dlsym(handle, "malloc");
     tru_free = (void *)dlsym(handle, "free");
     tru_realloc = (void *)dlsym(handle, "realloc");
+#endif
 }
+
+#ifndef _WIN32
 
 void *calloc(size_t nmemb, size_t size) {
     void *retval = NULL;
@@ -76,3 +82,5 @@ void *realloc(void *ptr, size_t size) {
     }
     return retval;
 }
+
+#endif

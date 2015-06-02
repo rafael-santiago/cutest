@@ -14,6 +14,8 @@
 extern "C" {
 #endif
 
+#ifndef _WIN32
+
 void *calloc(size_t nmemb, size_t size);
 
 void *malloc(size_t size);
@@ -23,6 +25,8 @@ void free(void *ptr);
 void *realloc(void *ptr, size_t size);
 
 void init_memory_func_ptr();
+
+#endif
 
 #ifdef __cplusplus
 }
