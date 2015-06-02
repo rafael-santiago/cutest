@@ -148,10 +148,9 @@ Or still:
 
 If you put the libcute in a well-known place.
 
-## Relevant options which your test binary accepts
+## Dumping test log to a file
 
-Until now there is only one option: ``--cute-log-path=<filepath>``. This option specifies a file path
-where the test log will be dumped.
+To do it use the option ``--cute-log-path=<filepath>``. This option specifies a file path where the test log will be dumped.
 
 ## Reading command line options from your test cases
 
