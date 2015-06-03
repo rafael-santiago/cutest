@@ -18,4 +18,4 @@ To build ``cutest`` the [hefesto](https://github.com/rafael-santiago/hefesto.git
 After a file named ``libcutest.a`` which stands for the library will be generated under the path ``src/lib``.
 Now just use this file and the header ``src/cutest.h`` to develop your further ``unit tests``.
 
-Maybe you should read the [documentation](https://github.com/rafael-santiago/cute/blob/master/doc/README.md) before start.
+Maybe you should read the [documentation](https://github.com/rafael-santiago/cutest/blob/master/doc/README.md) before start.
