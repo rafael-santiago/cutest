@@ -13,24 +13,24 @@ var cflags type list;
 var libraries type list;
 var ldflags type list;
 
-project cute-test : toolset "gcc-c-app" : $sources, $includes, $cflags, $libraries, $ldflags, "cute";
+project cutest-test : toolset "gcc-c-app" : $sources, $includes, $cflags, $libraries, $ldflags, "cutest";
 
-cute-test.prologue() {
-    hefesto.sys.echo("*** NOW RUNNING cute's UNIT TESTS... wait...\n\n");
-    $ldflags.add_item("../lib/libcute.a");
+cutest-test.prologue() {
+    hefesto.sys.echo("*** NOW RUNNING cutest's UNIT TESTS... wait...\n\n");
+    $ldflags.add_item("../lib/libcutest.a");
 	if (hefesto.sys.os_name() != "windows") {
 		$ldflags.add_item("-ldl");
 	}
     $sources.ls(".*\\.c$");
 }
 
-cute-test.epilogue() {
+cutest-test.epilogue() {
     if (hefesto.sys.last_forge_result() == 0) {
         var exit_code type int;
         if (hefesto.sys.os_name() != "windows") {
-            $exit_code = hefesto.sys.run("bin/cute --foo=bar");
+            $exit_code = hefesto.sys.run("bin/cutest --foo=bar");
         } else {
-            $exit_code = hefesto.sys.run("bin\\cute.exe --foo=bar");
+            $exit_code = hefesto.sys.run("bin\\cutest.exe --foo=bar");
         }
         if ($exit_code != 0) {
             hefesto.sys.echo("\n~~~~ UNIT TEST ERROR.\n\n");

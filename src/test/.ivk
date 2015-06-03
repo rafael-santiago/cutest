@@ -1,1 +1,1 @@
---forgefiles=Forgefile.hsl --Forgefile-projects=cute-test --obj-output-dir=obj --bin-output-dir=bin
+--forgefiles=Forgefile.hsl --Forgefile-projects=cutest-test --obj-output-dir=obj --bin-output-dir=bin

@@ -1,12 +1,12 @@
-# Libcute usage guide
+# Libcutest usage guide
 
-This document summarizes what is necessary to do in order to write unit tests for your project using ``libcute``.
+This document summarizes what is necessary to do in order to write unit tests for your project using ``libcutest``.
 
 ## How to use it?
 
 Firstly you need to include the main library header which stands for:
 
-    #include <cute.h>
+    #include <cutest.h>
 
 This header has lots of macro definitions including macros for test assertions, test running, etc.
 
@@ -17,7 +17,7 @@ Basically the ``main`` function from your test binary should include a call to t
 	    return 0;
 	}
 
-But for convenience ``cute`` brings a short way to define it:
+But for convenience ``cutest`` brings a short way to define it:
 
         CUTE_MAIN(entry)
 
@@ -140,17 +140,17 @@ Example:
 
 In order to ``link`` your test binary you can proceed like that:
 
-``gcc your-test.c -oyour-test libcute.a``
+``gcc your-test.c -oyour-test libcutest.a``
 
 Or still:
 
-``gcc your-test.c -oyour-test -lcute``
+``gcc your-test.c -oyour-test -lcutest``
 
 If you put the libcute in a well-known place.
 
 ## Dumping test log to a file
 
-To do it use the option ``--cute-log-path=<filepath>``. This option specifies a file path where the test log will be dumped.
+To do it use the option ``--cutest-log-path=<filepath>``. This option specifies a file path where the test log will be dumped.
 
 ## Reading command line options from your test cases
 
@@ -168,15 +168,15 @@ When you try to read an unknown option the return is always ``NULL`` and ``flag 
 
 Firstly be aware that the [``valgrind``](http://valgrind.org) usage is the best way to catch this kind of [raptors](https://xkcd.com/292/) inside your code. However ``cute`` brings a minimal system that performs memory leak detection. It could be a profitable way to detect this kind of issue as soon as possible. Because you will be looking for memory leaks being still on the test phase.
 
-The usage of this system must be flagged passing the option ``--cute-leak-check`` to your unit test binary. Something like:
+The usage of this system must be flagged passing the option ``--cutest-leak-check`` to your unit test binary. Something like:
 
-``something/leaking/over/the/rainbow/your-test --cute-leak-check``
+``something/leaking/over/the/rainbow/your-test --cutest-leak-check``
 
 When some memory leak is detected a report about this issue is included at the end of your general test report and the test binary exits with no zeroed ``exit code``.
 
 The format of this memory leak report is as follows:
 
-        cute INTERNAL ERROR: Memory leak(s) detected!!
+        cutest INTERNAL ERROR: Memory leak(s) detected!!
 
         >>>
         Id=4 Address=0x0804C008 File=/leak-sample/main.c [The last check before leak was at line #113] < leak bloody leak...o > 20 byte(s).
@@ -205,11 +205,11 @@ these options.
 
 **Table 1**: The ``test-log`` options.
 
-|          **Option**        |               **Receives**                  |
-|:--------------------------:|--------------------------------------------:|
-| ``--cute-test-log-header`` | a file path pointing to the header template |
-| ``--cute-test-log-detail`` | a file path pointing to the detail template |
-| ``--cute-test-log-footer`` | a file path pointing to the footer template |
+|          **Option**     |               **Receives**                  |
+|:-----------------------:|--------------------------------------------:|
+| ``--cutest-log-header`` | a file path pointing to the header template |
+| ``--cutest-log-detail`` | a file path pointing to the detail template |
+| ``--cutest-log-footer`` | a file path pointing to the footer template |
 
 Into the layout goes the specific tokens related with the chosen format well as the variables that belongs relevant info about the logged process.
 
@@ -251,7 +251,7 @@ and then the ``footer``.
 
 To use these templates you must to indicated them by command line in this following way:
 
-``somewhere/over/the/rainbow/your-test --cute-test-log-header=templates/test-log-header.html --cute-test-log-detail=templates/test-log-detail.html --cute-test-log-footer=templates/test-log-footer.html``
+``somewhere/over/the/rainbow/your-test --cutest-log-header=templates/test-log-header.html --cutest-log-detail=templates/test-log-detail.html --cutest-log-footer=templates/test-log-footer.html``
 
 ### Customizing the memory leak report
 
@@ -270,5 +270,5 @@ It is possible too. The Table 3 brings all variables recognized by this kind of 
 |         ``$LEAK_SUM``             | the total (in bytes) that is leaking                            |
 
 Similar the test log custom you need to pass the options specifying the file path of ``header``, ``detail`` and ``footer``.
-These options are respectively: ``--cute-leak-log-header``, ``--cute-leak-log-detail`` and ``--cute-leak-log-footer``.
+These options are respectively: ``--cutest-leak-log-header``, ``--cutest-leak-log-detail`` and ``--cutest-leak-log-footer``.
 

@@ -5,8 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#include "../cute.h"
-#include "../cute_mmap.h"
+#include "../cutest.h"
+#include "../cutest_mmap.h"
 
 static int g_counter = 0;
 

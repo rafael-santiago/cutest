@@ -5,7 +5,7 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#include "cute.h"
+#include "cutest.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>

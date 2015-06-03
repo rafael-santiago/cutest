@@ -5,8 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef _CUTE_CUTE_H
-#define _CUTE_CUTE_H 1
+#ifndef _CUTEST_H
+#define _CUTEST_H 1
 
 #include <stdio.h>
 #include <signal.h>
@@ -20,8 +20,8 @@
 extern "C" {
 #endif
 
-#include "cute_memory.h"
-#include "cute_mmap.h"
+#include "cutest_memory.h"
+#include "cutest_mmap.h"
 
 #define CUTE_PASSED_LABEL "passed"
 
@@ -78,7 +78,7 @@ extern "C" {
                             char *entry_return = entry();\
                             if (entry_return == NULL) {\
                                 cute_set_log_template(NULL);\
-                                user_template = cute_get_option("cute-test-log-footer", argc, argv, NULL);\
+                                user_template = cute_get_option("cutest-log-footer", argc, argv, NULL);\
                                 if (user_template != NULL) {\
                                     cute_set_log_template(user_template);\
                                     cute_log("");\
@@ -89,7 +89,7 @@ extern "C" {
                             } else {\
                                 cute_close_log_fd();\
                                 cute_set_log_template(NULL);\
-                                user_template = cute_get_option("cute-test-log-footer", argc, argv, NULL);\
+                                user_template = cute_get_option("cutest-log-footer", argc, argv, NULL);\
                                 if (user_template != NULL) {\
                                     cute_set_log_template(user_template);\
                                     cute_log("");\
@@ -145,11 +145,11 @@ extern "C" {
                           signal(SIGINT, sigint_watchdog);\
                           signal(SIGTERM, sigint_watchdog);\
                           init_memory_func_ptr();\
-                          logpath = cute_get_option("cute-log-path", argc, argv, NULL);\
-                          if (cute_get_option("cute-leak-check", argc, argv, NULL) != NULL) {\
+                          logpath = cute_get_option("cutest-log-path", argc, argv, NULL);\
+                          if (cute_get_option("cutest-leak-check", argc, argv, NULL) != NULL) {\
                            g_cute_leak_check = 1;\
                           }\
-                          leak_id = cute_get_option("cute-leak-id", argc, argv, NULL);\
+                          leak_id = cute_get_option("cutest-leak-id", argc, argv, NULL);\
                           if (leak_id != NULL) {\
                            g_cute_leak_id = atoi(leak_id);\
                           }\
@@ -158,13 +158,13 @@ extern "C" {
                           if (logpath != NULL) {\
                            cute_open_log_fd(logpath);\
                           }\
-                          user_template = cute_get_option("cute-test-log-header", argc, argv, NULL);\
+                          user_template = cute_get_option("cutest-log-header", argc, argv, NULL);\
                           if (user_template != NULL) {\
                            cute_set_log_template(user_template);\
                            cute_log("");\
                            cute_set_log_template(NULL);\
                           }\
-                          user_template = cute_get_option("cute-test-log-detail", argc, argv, NULL);\
+                          user_template = cute_get_option("cutest-log-detail", argc, argv, NULL);\
                           if (user_template != NULL) {\
                            cute_set_log_template(user_template);\
                           }\
@@ -206,11 +206,11 @@ extern "C" {
                           signal(SIGINT, sigint_watchdog);\
                           signal(SIGTERM, sigint_watchdog);\
                           init_memory_func_ptr();\
-                          logpath = cute_get_option("cute-log-path", argc, argv, NULL);\
-                          if (cute_get_option("cute-leak-check", argc, argv, NULL) != NULL) {\
+                          logpath = cute_get_option("cutest-log-path", argc, argv, NULL);\
+                          if (cute_get_option("cutest-leak-check", argc, argv, NULL) != NULL) {\
                            g_cute_leak_check = 1;\
                           }\
-                          leak_id = cute_get_option("cute-leak-id", argc, argv, NULL);\
+                          leak_id = cute_get_option("cutest-leak-id", argc, argv, NULL);\
                           if (leak_id != NULL) {\
                            g_cute_leak_id = atoi(leak_id);\
                           }\
@@ -219,13 +219,13 @@ extern "C" {
                           if (logpath != NULL) {\
                            cute_open_log_fd(logpath);\
                           }\
-                          user_template = cute_get_option("cute-test-log-header", argc, argv, NULL);\
+                          user_template = cute_get_option("cutest-log-header", argc, argv, NULL);\
                           if (user_template != NULL) {\
                            cute_set_log_template(user_template);\
                            cute_log("");\
                            cute_set_log_template(NULL);\
                           }\
-                          user_template = cute_get_option("cute-test-log-detail", argc, argv, NULL);\
+                          user_template = cute_get_option("cutest-log-detail", argc, argv, NULL);\
                           if (user_template != NULL) {\
                            cute_set_log_template(user_template);\
                           }\

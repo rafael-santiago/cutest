@@ -11,21 +11,21 @@ var sources type list;
 var includes type list;
 var cflags type list;
 
-project cute : toolset "gcc-c-lib" : $sources, $includes, $cflags, "libcute.a" ;
+project cutest : toolset "gcc-c-lib" : $sources, $includes, $cflags, "libcutest.a" ;
 
-cute.prologue() {
-    hefesto.sys.echo("*** NOW BUILDING cute.a... wait...\n\n");
+cutest.prologue() {
+    hefesto.sys.echo("*** NOW BUILDING cutest.a... wait...\n\n");
     $sources.ls(".*\\.c$");
     $cflags = hefesto.sys.get_option("cflags");
 }
 
-cute.epilogue() {
+cutest.epilogue() {
     if (hefesto.sys.last_forge_result() == 0) {
-        hefesto.sys.echo("\n*** cute.a WAS BUILT.\n\n");
+        hefesto.sys.echo("\n*** libcutest.a WAS BUILT.\n\n");
         var exit_code type int;
         $exit_code = 1;
         if (hefesto.sys.cd("test")) {
-            $exit_code = hefesto.sys.forge("cute-test", "Forgefile.hsl", "--obj-output-dir=obj --bin-output-dir=bin");
+            $exit_code = hefesto.sys.forge("cutest-test", "Forgefile.hsl", "--obj-output-dir=obj --bin-output-dir=bin");
             hefesto.sys.cd("..");
         }
         if ($exit_code != 0) {

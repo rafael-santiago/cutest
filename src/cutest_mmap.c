@@ -5,8 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#include "cute_mmap.h"
-#include "cute.h"
+#include "cutest_mmap.h"
+#include "cutest.h"
 #include <string.h>
 #include <pthread.h>
 #include <signal.h>
