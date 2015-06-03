@@ -196,7 +196,7 @@ The report includes:
 
 In the end is also included a sum of all detected leaks.
 
-The allocation id can be used in order to force a debug break. When you pass to your test binary the option ``--cute-leak-id=<allocation-id>`` a ``trap`` signal will be raised at the moment that the allocation id be equals to passed value.
+The allocation id can be used in order to force a debug break. When you pass to your test binary the option ``--cutest-leak-id=<allocation-id>`` a ``trap`` signal will be raised at the moment that the allocation id be equals to passed value. Being the debugger attached you will be able to inspect the ``callstack`` and then know more about this "superunknown" leak.
 
 ## Log customizing
 
