@@ -170,7 +170,7 @@ void cute_open_log_fd(const char *filepath) {
     cute_close_log_fd();
     g_cute_log_fd = fopen(filepath, "wb");
     if (g_cute_log_fd == NULL) {
-        printf("cute WARNING: Unable to create file \"%s\". All will be logged to stdout.\n", filepath);
+        printf("cutest WARNING: Unable to create file \"%s\". All will be logged to stdout.\n", filepath);
     }
 }
 
@@ -351,9 +351,9 @@ void cute_log_memory_leak() {
     char *template_path = NULL;
     size_t a = 0;
     size_t leak_total = 0;
-    template_path = cute_get_option("cute-leak-log-header", g_cute_argc, g_cute_argv, NULL);
+    template_path = cute_get_option("cutest-leak-log-header", g_cute_argc, g_cute_argv, NULL);
     if (template_path == NULL) {
-        cute_log("\n\ncute INTERNAL ERROR: Memory leak(s) detected!!\n\n>>>\n");
+        cute_log("\n\ncutest INTERNAL ERROR: Memory leak(s) detected!!\n\n>>>\n");
     } else {
         g_leak_sum = 0;
         for (mp = g_cute_mmap; mp != NULL; mp = mp->next) {
@@ -363,7 +363,7 @@ void cute_log_memory_leak() {
         cute_log("");
         cute_set_log_template(NULL);
     }
-    template_path = cute_get_option("cute-leak-log-detail", g_cute_argc, g_cute_argv, NULL);
+    template_path = cute_get_option("cutest-leak-log-detail", g_cute_argc, g_cute_argv, NULL);
     if (template_path != NULL) {
         cute_set_log_template(template_path);
     }
@@ -388,7 +388,7 @@ void cute_log_memory_leak() {
     if (template_path != NULL) {
         cute_set_log_template(NULL);
     }
-    template_path = cute_get_option("cute-leak-log-footer", g_cute_argc, g_cute_argv, NULL);
+    template_path = cute_get_option("cutest-leak-log-footer", g_cute_argc, g_cute_argv, NULL);
     if (template_path == NULL) {
         cute_log("\nLeak total: %d byte(s).\n<<<\n", leak_total);
     } else {

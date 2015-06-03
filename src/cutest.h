@@ -124,7 +124,7 @@ extern "C" {
                          void sigsegv_watchdog(int signum) {\
                           size_t size;\
                           void *array[50];\
-                          printf("-- CUTE PANIC TRAP --\n");\
+                          printf("-- CUTEST PANIC TRAP --\n");\
                           if (g_cute_last_exec_line > -1) {\
                            printf("\n< The last successfully executed line was the line #%d from file \"%s\" >", g_cute_last_exec_line, g_cute_last_ref_file);\
                           }\
@@ -238,9 +238,9 @@ extern "C" {
                           cute_close_log_fd();\
                           return exit_code;\
                          }
-	
+
 #endif
-						 
+
 #define CUTE_GET_OPTION(o) ( cute_get_option(o, g_cute_argc, g_cute_argv, NULL) )
 
 extern int g_cute_general_counter;

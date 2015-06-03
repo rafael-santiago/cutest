@@ -14,7 +14,7 @@ var cflags type list;
 project cutest : toolset "gcc-c-lib" : $sources, $includes, $cflags, "libcutest.a" ;
 
 cutest.prologue() {
-    hefesto.sys.echo("*** NOW BUILDING cutest.a... wait...\n\n");
+    hefesto.sys.echo("*** NOW BUILDING libcutest.a... wait...\n\n");
     $sources.ls(".*\\.c$");
     $cflags = hefesto.sys.get_option("cflags");
 }

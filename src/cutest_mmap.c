@@ -22,12 +22,12 @@ static int g_temp_cute_leak_check = 0;
                                g_cute_leak_check = g_temp_cute_leak_check )
 
 #ifndef _WIN32
-							   
+
 pthread_mutex_t mmap_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 #endif
 
-static struct cute_mmap_ctx *get_cute_mmap_ctx_tail(struct cute_mmap_ctx *mmap) {	
+static struct cute_mmap_ctx *get_cute_mmap_ctx_tail(struct cute_mmap_ctx *mmap) {
 #ifndef _WIN32
     struct cute_mmap_ctx *p;
     if (mmap == NULL) {
@@ -62,7 +62,7 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
     if (p->id == g_cute_leak_id) {
 	raise(SIGTRAP);
     }
-    pthread_mutex_unlock(&mmap_mutex);	
+    pthread_mutex_unlock(&mmap_mutex);
     return head;
 #else
 	return NULL;
