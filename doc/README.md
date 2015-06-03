@@ -146,6 +146,8 @@ Or still:
 
 ``gcc your-test.c -oyour-test -lcutest``
 
+On ``Linux`` is also necessary use the link-option ``-ldl``.
+
 If you put the libcute in a well-known place.
 
 ## Dumping test log to a file
