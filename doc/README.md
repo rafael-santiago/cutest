@@ -140,7 +140,7 @@ Example:
 
 Sometimes for debug issues you may need to print this piece of information. So you could try this:
 
-	printf("Oh Gosh! Houston we got a Raptor in %s\n", CUTE_CASE_NAME);
+	printf("Oh my God! Houston we got Raptors in %s\n", CUTE_CASE_NAME);
 
 Or:
 
@@ -150,9 +150,9 @@ Or still:
 
 	cute_log("Oh my God! Houston, we got Raptors in $CASE_NAME!\n");
 
-## How to link my test with cute?
+## How to link my test with cutest?
 
-In order to ``link`` your test binary you can proceed like that:
+In order to ``link`` your test binary you can proceed as follows:
 
 ``gcc your-test.c -oyour-test libcutest.a``
 
@@ -162,7 +162,7 @@ Or still:
 
 On ``Linux`` is also necessary use the link-option ``-ldl``.
 
-If you put the libcute in a well-known place.
+If you put ``libcutest`` in a well-known place.
 
 ## Dumping test log to a file
 
@@ -182,13 +182,13 @@ When you try to read an unknown option the return is always ``NULL`` and ``flag 
 
 ## Detecting memory leaks
 
-Firstly be aware that the [``valgrind``](http://valgrind.org) usage is the best way to catch this kind of [raptors](https://xkcd.com/292/) inside your code. However ``cute`` brings a minimal system that performs memory leak detection. It could be a profitable way to detect this kind of issue as soon as possible. Because you will be looking for memory leaks being still on the test phase.
+Firstly be aware that the [``valgrind``](http://valgrind.org) usage is the best way to catch this kind of [raptors](https://xkcd.com/292/) inside your code. However ``cute`` brings a minimal system that performs memory leak detection. It could be a profitable way to detect this kind of issue as soon as possible. Because you will be looking for memory leaks being still on test phase.
 
 The usage of this system must be flagged passing the option ``--cutest-leak-check`` to your unit test binary. Something like:
 
 ``something/leaking/over/the/rainbow/your-test --cutest-leak-check``
 
-When some memory leak is detected a report about this issue is included at the end of your general test report and the test binary exits with no zeroed ``exit code``.
+When some memory leak is detected a report about this issue is included at the end of your general test report and the test binary exits with a non-zero ``exit code``.
 
 The format of this memory leak report is as follows:
 
@@ -214,7 +214,7 @@ The allocation id can be used in order to force a debug break. When you pass to 
 
 ## Log customizing
 
-It is possible to custom the test logs. Cute divide the log in three parts which are: header, detail and footer.
+It is possible to custom the test logs. ``Cutest`` divide the log in three parts which are: ``header``, ``detail`` and ``footer``.
 
 There are three options that you need to pass to your test binary if you intend to modify the log layout. Table 1 summarizes
 these options.
@@ -227,7 +227,7 @@ these options.
 | ``--cutest-log-detail`` | a file path pointing to the detail template |
 | ``--cutest-log-footer`` | a file path pointing to the footer template |
 
-Into the layout goes the specific tokens related with the chosen format well as the variables that belongs relevant info about the logged process.
+Into the template goes the specific tokens related with the chosen format well as the variables that belongs relevant infos about the logged process.
 
 Table 2 brings a listing of these variables and what they represent.
 
@@ -256,7 +256,7 @@ Here goes the log ``header``:
 now the ``detail``...
 
         <!-- test-log-detail.html -->
-        <tr><td>$TEST in $FILE at $LINE</td><td>$STATUS</td><td>$ASSERTION_MESSAGE</td></tr>
+        <tr><td>$CASE_NAME in $FILE at $LINE</td><td>$STATUS</td><td>$ASSERTION_MESSAGE</td></tr>
 
 and then the ``footer``.
 
