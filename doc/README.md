@@ -136,6 +136,20 @@ Example:
 
 	CUTE_CHECK_GEQ("x <= 19", x, 20);
 
+## How can I print the current case name?
+
+Sometimes for debug issues you may need to print this piece of information. So you could try this:
+
+	printf("Oh Gosh! Houston we got a Raptor in %s\n", CUTE_CASE_NAME);
+
+Or:
+
+	cute_log("Oh my God! Houston, we got Raptors in %s!\n", CUTE_CASE_NAME);
+
+Or still:
+
+	cute_log("Oh my God! Houston, we got Raptors in $CASE_NAME!\n");
+
 ## How to link my test with cute?
 
 In order to ``link`` your test binary you can proceed like that:
@@ -224,7 +238,7 @@ Table 2 brings a listing of these variables and what they represent.
 |        ``$FILE``           | the test file path                         |
 |        ``$LINE``           | the test file line number                  |
 |       ``$STATUS``          | the test status (``passed`` or ``failed``) |
-|        ``$TEST``           | the test name                              |
+|     ``$CASE_NAME``         | the test name                              |
 |    ``$RAN_TEST_NR``        | the ran tests amount                       |
 | ``$ASSERTION_MESSAGE``     | the user defined assertion message         |
 

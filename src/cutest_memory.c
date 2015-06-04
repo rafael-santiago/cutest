@@ -10,6 +10,8 @@
 #include "cutest_mmap.h"
 #ifndef _WIN32
 #include <dlfcn.h>
+#else
+#include <windows.h>
 #endif
 
 static void *(*tru_calloc)(size_t, size_t) = NULL;
@@ -23,6 +25,9 @@ static void *(*tru_realloc)(void *, size_t) = NULL;
 static int g_memhook_init_done = 0;
 
 void init_memory_func_ptr() {
+	if (tru_calloc != NULL && tru_malloc != NULL && tru_realloc != NULL && tru_free != NULL) {
+		return;
+	}
 #ifndef _WIN32
     void *handle = (void *)-1;
     tru_calloc = (void *)dlsym(handle, "calloc");
@@ -30,22 +35,33 @@ void init_memory_func_ptr() {
     tru_free = (void *)dlsym(handle, "free");
     tru_realloc = (void *)dlsym(handle, "realloc");
     g_memhook_init_done = 1;
+#else
+	HMODULE handle = GetModuleHandle("MSVCRT.dll");
+	if (handle != NULL) {
+		tru_calloc = (void *)GetProcAddress(handle, "calloc");
+		tru_malloc = (void *)GetProcAddress(handle, "malloc");
+		tru_free  = (void *)GetProcAddress(handle, "free");
+		tru_realloc = (void *)GetProcAddress(handle, "realloc");
+	} else {
+		cute_log("libcutest INTERNAL ERROR: unable to find \"MSVCRT.dll\".\n");
+	}
 #endif
 }
-
-#ifndef _WIN32
 
 void *calloc(size_t nmemb, size_t size) {
     void *retval = NULL;
     if (tru_calloc == NULL) {
-	if (g_memhook_init_done) {
-	    cute_log("libcute INTERNAL ERROR: null tru_calloc().");
-	}
-        return NULL;
+		init_memory_func_ptr();
+		if (g_memhook_init_done) {
+			cute_log("libcutest INTERNAL ERROR: null tru_calloc().\n");
+		}
+		if (tru_calloc == NULL) {
+			return NULL;
+		}
     }
     retval = tru_calloc(nmemb, size);
     if (g_cute_leak_check) {
-	g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
+		g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
     }
     return retval;
 }
@@ -53,27 +69,33 @@ void *calloc(size_t nmemb, size_t size) {
 void *malloc(size_t size) {
     void *retval = NULL;
     if (tru_malloc == NULL) {
-	if (g_memhook_init_done) {
-	    cute_log("libcute INTERNAL ERROR: null tru_malloc().");
-	}
-        return NULL;
+		init_memory_func_ptr();
+		if (g_memhook_init_done) {
+			cute_log("libcutest INTERNAL ERROR: null tru_malloc().\n");
+		}
+		if (tru_malloc == NULL) {
+			return NULL;
+		}
     }
     retval = tru_malloc(size);
     if (g_cute_leak_check) {
-	g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
+		g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
     }
     return retval;
 }
 
 void free(void *ptr) {
     if (tru_free == NULL) {
-	if (g_memhook_init_done) {
-	    cute_log("libcute INTERNAL ERROR: null tru_free().");
-	}
-        return;
+		init_memory_func_ptr();
+		if (g_memhook_init_done) {
+			cute_log("libcutest INTERNAL ERROR: null tru_free().\n");
+		}
+		if (tru_free == NULL) {
+			return;
+		}
     }
     if (g_cute_leak_check) {
-	g_cute_mmap = rm_allocation_from_cute_mmap_ctx(g_cute_mmap, ptr);
+		g_cute_mmap = rm_allocation_from_cute_mmap_ctx(g_cute_mmap, ptr);
     }
     tru_free(ptr);
 }
@@ -81,17 +103,18 @@ void free(void *ptr) {
 void *realloc(void *ptr, size_t size) {
     void *retval = NULL;
     if (tru_realloc == NULL) {
-	if (g_memhook_init_done) {
-	    cute_log("libcute INTERNAL ERROR: null tru_realloc().");
-	}
-        return NULL;
+		init_memory_func_ptr();
+		if (g_memhook_init_done) {
+			cute_log("libcutest INTERNAL ERROR: null tru_realloc().\n");
+		}
+		if (tru_realloc == NULL) {
+			return NULL;
+		}
     }
     retval = tru_realloc(ptr, size);
     if (g_cute_leak_check) {
-	g_cute_mmap = rm_allocation_from_cute_mmap_ctx(g_cute_mmap, ptr);
-	g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
+		g_cute_mmap = rm_allocation_from_cute_mmap_ctx(g_cute_mmap, ptr);
+		g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
     }
     return retval;
 }
-
-#endif

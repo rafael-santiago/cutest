@@ -243,6 +243,8 @@ extern "C" {
 
 #define CUTE_GET_OPTION(o) ( cute_get_option(o, g_cute_argc, g_cute_argv, NULL) )
 
+#define CUTE_CASE_NAME ( g_cute_test_name )
+
 extern int g_cute_general_counter;
 
 extern int g_cute_ran_tests;

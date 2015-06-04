@@ -141,7 +141,7 @@ static struct cute_vars_ctx cute_vars[CUTE_VARS_NR] = {
     {              "FILE",              get_file,   kStr},
     {              "LINE",              get_line,   kInt},
     {            "STATUS",            get_status,   kStr},
-    {              "TEST",         get_test_name,   kStr},
+    {         "CASE_NAME",         get_test_name,   kStr},
     {      "RAN_TESTS_NR",         get_ran_tests,   kInt},
     { "ASSERTION_MESSAGE", get_assertion_message,   kStr},
     {           "LEAK_ID",           get_leak_id,   kInt},
@@ -339,7 +339,7 @@ char *cute_get_option(const char *option, int argc, char **argv, char *default_v
     }
     sprintf(optlabel, "--%s", option);
     for (a = 0; a < argc; a++) {
-        if (strstr(argv[a], optlabel) == argv[a]) {
+        if (strcmp(argv[a], optlabel) == 0) {
             return "1";
         }
     }
