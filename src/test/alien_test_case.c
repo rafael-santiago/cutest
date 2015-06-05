@@ -1,3 +1,10 @@
+/*
+ *                                Copyright (C) 2015 by Rafael Santiago
+ *
+ * This is a free software. You can redistribute it and/or modify under
+ * the terms of the GNU General Public License version 2.
+ *
+ */
 #include "alien_test_case.h"
 
 CUTE_TEST_CASE(alien_test_case)
