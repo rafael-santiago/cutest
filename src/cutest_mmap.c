@@ -53,8 +53,8 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
 #ifndef _WIN32
     pthread_mutex_lock(&mmap_mutex);
 #else
-	mmap_mutex = CreateMutex(NULL, FALSE, NULL);
-	WaitForSingleObject(mmap_mutex, INFINITE);
+    mmap_mutex = CreateMutex(NULL, FALSE, NULL);
+    WaitForSingleObject(mmap_mutex, INFINITE);
 #endif
     head = mmap;
     if (head == NULL) {
@@ -70,15 +70,15 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
     p->addr = addr;
     if (p->id == g_cute_leak_id) {
 #ifndef _WIN32
-		raise(SIGTRAP);
+        raise(SIGTRAP);
 #else
-		DebugBreak();
+        DebugBreak();
 #endif
     }
 #ifndef _WIN32
     pthread_mutex_unlock(&mmap_mutex);
 #else
-	ReleaseMutex(mmap_mutex);
+    ReleaseMutex(mmap_mutex);
 #endif
     return head;
 }
@@ -91,15 +91,15 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
 #ifndef _WIN32
     pthread_mutex_lock(&mmap_mutex);
 #else
-	mmap_mutex = CreateMutex(NULL, FALSE, NULL);
-	WaitForSingleObject(mmap_mutex, INFINITE);
+    mmap_mutex = CreateMutex(NULL, FALSE, NULL);
+    WaitForSingleObject(mmap_mutex, INFINITE);
 #endif
     head = mmap;
     if (mmap == NULL) {
 #ifndef _WIN32
         pthread_mutex_unlock(&mmap_mutex);
 #else
-		ReleaseMutex(mmap_mutex);
+        ReleaseMutex(mmap_mutex);
 #endif
         return NULL;
     }
@@ -121,7 +121,7 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
 #ifndef _WIN32
     pthread_mutex_unlock(&mmap_mutex);
 #else
-	ReleaseMutex(mmap_mutex);
+    ReleaseMutex(mmap_mutex);
 #endif
     return head;
 }
@@ -132,8 +132,8 @@ void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
 #ifndef _WIN32
     pthread_mutex_lock(&mmap_mutex);
 #else
-	mmap_mutex = CreateMutex(NULL, FALSE, NULL);
-	WaitForSingleObject(mmap_mutex, INFINITE);
+    mmap_mutex = CreateMutex(NULL, FALSE, NULL);
+    WaitForSingleObject(mmap_mutex, INFINITE);
 #endif
     temp = g_cute_leak_check;
     g_cute_leak_check = 0;
@@ -145,6 +145,6 @@ void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
 #ifndef _WIN32
     pthread_mutex_unlock(&mmap_mutex);
 #else
-	ReleaseMutex(mmap_mutex);
+    ReleaseMutex(mmap_mutex);
 #endif
 }

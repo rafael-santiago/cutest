@@ -7,6 +7,7 @@
  */
 #include "../cutest.h"
 #include "../cutest_mmap.h"
+#include "alien_test_case.h"
 
 static int g_counter = 0;
 
@@ -148,6 +149,8 @@ CUTE_TEST_CASE(entry)
     CUTE_RUN_TEST(CUTE_GET_OPTION_MACRO_test);
     CUTE_RUN_TEST(cute_mmap_ctx_general_tests);
     CUTE_RUN_TEST(leak_check_tests);
+    CUTE_RUN_TEST(alien_test_case);
+    CUTE_RUN_TEST_WITH_FIXTURE(alien_fixture_test_case);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(entry)

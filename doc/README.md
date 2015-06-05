@@ -60,7 +60,39 @@ If your ``test-case`` needs fixtures you must declare the fixtures using the fol
             CUTE_RUN_TEST_WITH_FIXTURE(my_test_case); // the test invocation macro differs from tests that do not have fixtures.
         CUTE_TEST_CASE_END
 
-Tests with fixtures must define the both fixtures, the setup and the teardown, otherwise you will get errors related with unresolved externals.
+Tests with fixtures must define the both fixtures, the ``setup`` and the ``teardown``, otherwise you will get errors related with unresolved externals.
+
+## Not implementing all test cases in just one source file
+
+Sometimes is necessary divide the implementation among several files finding to keep our sanity. Then in this case you should use the macros destinated to do the tests prototypes. Take a look:
+
+        // filesystem_test_cases.h
+        #ifndef _FILESYSTEM_TEST_CASES_H
+        #define _FILESYSTEM_TEST_CASES_H 1
+
+        #include <cutest.h>
+
+        CUTE_DECLARE_TEST_CASE(test_fopen);
+
+        CUTE_DECLARE_TEST_CASE_WITH_FIXTURE(test_remove);
+
+        CUTE_DECLARE_TEST_CASE_WITH_FIXTURE(test_mkdir);
+
+        #endif
+
+Now supposing that ``filesystem_test_cases.c`` has already implemented all you need to do inside of your main source file
+or at least where you plan call your test cases:
+
+        // main.c
+        #include "filesystem_test_cases.h"
+
+        (...)
+
+        CUTE_TEST_CASE(entry)
+            CUTE_RUN_TEST(test_fopen);
+            CUTE_RUN_TEST_WITH_FIXTURE(test_remove);
+            CUTE_RUN_TEST_WITH_FIXTURE(test_mkdir);
+	CUTE_TEST_CASE_END
 
 ## Available assertion macros
 
@@ -156,13 +188,11 @@ In order to ``link`` your test binary you can proceed as follows:
 
 ``gcc your-test.c -oyour-test libcutest.a``
 
-Or still:
+Or still (if you put ``libcutest`` in a well-known place):
 
 ``gcc your-test.c -oyour-test -lcutest``
 
-On ``Linux`` is also necessary use the link-option ``-ldl``.
-
-If you put ``libcutest`` in a well-known place.
+Being on ``Linux`` is also necessary use the additional link-flag ``-ldl``.
 
 ## Dumping test log to a file
 
@@ -283,7 +313,7 @@ It is possible too. The Table 3 brings all variables recognized by this kind of 
 |         ``$LEAK_LINE``            | the file line number of the last test assertion before the leak |
 |         ``$LEAK_DATA``            | the data which is leaking                                       |
 |         ``$LEAK_SIZE``            | the size of leak                                                |
-|         ``$LEAK_SUM``             | the total (in bytes) that is leaking                            |
+|         ``$LEAK_SUM``             | the total (in bytes) that are leaking                           |
 
 Similar the test log custom you need to pass the options specifying the file path of ``header``, ``detail`` and ``footer``.
 These options are respectively: ``--cutest-leak-log-header``, ``--cutest-leak-log-detail`` and ``--cutest-leak-log-footer``.

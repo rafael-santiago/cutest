@@ -101,6 +101,11 @@ extern "C" {
                             }\
                         } while(0);
 
+#define CUTE_DECLARE_TEST_CASE(test) char *test()
+
+#define CUTE_DECLARE_TEST_CASE_WITH_FIXTURE(test)  void test ## _setup();\
+                                                   char *test();\
+                                                   void test ## _teardown()
 #define CUTE_TEST_CASE(test) char *test() {
 
 #define CUTE_TEST_CASE_END  return NULL;\
