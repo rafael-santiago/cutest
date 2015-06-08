@@ -21,4 +21,4 @@ Now just use this file and the header ``src/cutest.h`` to develop your further `
 Note that the build was written based on ``GCC``. So, you need to have the ``gcc``/``mingw`` installed (and well exported)
 on your system before going ahead.
 
-Maybe you should read the [documentation](https://github.com/rafael-santiago/cutest/blob/master/doc/README.md) before start.
+Maybe you should read the [documentation](https://github.com/rafael-santiago/cutest/blob/master/doc/README.md) before starting.
