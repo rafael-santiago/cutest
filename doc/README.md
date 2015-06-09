@@ -92,7 +92,7 @@ or at least where you plan call your test cases:
             CUTE_RUN_TEST(test_fopen);
             CUTE_RUN_TEST_WITH_FIXTURE(test_remove);
             CUTE_RUN_TEST_WITH_FIXTURE(test_mkdir);
-	CUTE_TEST_CASE_END
+        CUTE_TEST_CASE_END
 
 ## Available assertion macros
 
@@ -212,7 +212,7 @@ When you try to read an unknown option the return is always ``NULL`` and ``flag 
 
 ## Detecting memory leaks
 
-Firstly be aware that the [``valgrind``](http://valgrind.org) usage is the best way to catch this kind of [raptors](https://xkcd.com/292/) inside your code. However ``cute`` brings a minimal system that performs memory leak detection. It could be a profitable way to detect this kind of issue as soon as possible. Because you will be looking for memory leaks being still on test phase.
+Firstly be aware that the [``valgrind``](http://valgrind.org) usage is the best way to catch this kind of [raptors](https://xkcd.com/292/) inside your code. However ``cutest`` brings a minimal system that performs memory leak detection. It could be a profitable way to detect this kind of issue as soon as possible. Because you will be looking for memory leaks being still on test phase.
 
 The usage of this system must be flagged passing the option ``--cutest-leak-check`` to your unit test binary. Something like:
 
