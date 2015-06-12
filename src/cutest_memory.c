@@ -42,6 +42,7 @@ void init_memory_func_ptr() {
         tru_malloc = (void *)GetProcAddress(handle, "malloc");
         tru_free  = (void *)GetProcAddress(handle, "free");
         tru_realloc = (void *)GetProcAddress(handle, "realloc");
+		g_memhook_init_done = 1;
     } else {
         cute_log("libcutest INTERNAL ERROR: unable to find \"MSVCRT.dll\".\n");
     }
