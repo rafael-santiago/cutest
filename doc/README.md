@@ -295,7 +295,7 @@ and then the ``footer``.
             <b>Total tests executed</b>: $RAN_TESTS_NR
         </html>
 
-To use these templates you must to indicated them by command line in this following way:
+To use these templates you must indicate them by command line in this following way:
 
 ``somewhere/over/the/rainbow/your-test --cutest-log-header=templates/test-log-header.html --cutest-log-detail=templates/test-log-detail.html --cutest-log-footer=templates/test-log-footer.html``
 
