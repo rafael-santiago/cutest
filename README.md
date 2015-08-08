@@ -2,7 +2,7 @@
 
 Cutest is an acronym that can be undestood as ``C`` ``u``nit ``te``st.
 
-This library brings a bunch of macros in order to guide the implementation of unit tests on ``C`` projects.
+This library brings a bunch of macros in order to guide the implementation of unit tests for ``C`` projects.
 
 It brings a minimal memory leak detection system (fully working on ``Linux`` and ``Windows``).
 
