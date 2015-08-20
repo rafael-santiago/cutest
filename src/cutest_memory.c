@@ -42,7 +42,7 @@ void init_memory_func_ptr() {
         tru_malloc = (void *)GetProcAddress(handle, "malloc");
         tru_free  = (void *)GetProcAddress(handle, "free");
         tru_realloc = (void *)GetProcAddress(handle, "realloc");
-		g_memhook_init_done = 1;
+        g_memhook_init_done = 1;
     } else {
         cute_log("libcutest INTERNAL ERROR: unable to find \"MSVCRT.dll\".\n");
     }
@@ -52,12 +52,12 @@ void init_memory_func_ptr() {
 void *calloc(size_t nmemb, size_t size) {
     void *retval = NULL;
     if (tru_calloc == NULL) {
-        init_memory_func_ptr();
+//        init_memory_func_ptr();
         if (g_memhook_init_done) {
-	    cute_log("libcutest INTERNAL ERROR: null tru_calloc().\n");
+            cute_log("libcutest INTERNAL ERROR: null tru_calloc().\n");
         }
-	if (tru_calloc == NULL) {
-	    return NULL;
+        if (tru_calloc == NULL) {
+            return NULL;
         }
     }
     retval = tru_calloc(nmemb, size);
@@ -70,7 +70,7 @@ void *calloc(size_t nmemb, size_t size) {
 void *malloc(size_t size) {
     void *retval = NULL;
     if (tru_malloc == NULL) {
-        init_memory_func_ptr();
+//        init_memory_func_ptr();
         if (g_memhook_init_done) {
             cute_log("libcutest INTERNAL ERROR: null tru_malloc().\n");
         }
@@ -87,7 +87,7 @@ void *malloc(size_t size) {
 
 void free(void *ptr) {
     if (tru_free == NULL) {
-        init_memory_func_ptr();
+//        init_memory_func_ptr();
         if (g_memhook_init_done) {
             cute_log("libcutest INTERNAL ERROR: null tru_free().\n");
         }
@@ -104,12 +104,12 @@ void free(void *ptr) {
 void *realloc(void *ptr, size_t size) {
     void *retval = NULL;
     if (tru_realloc == NULL) {
-        init_memory_func_ptr();
+//        init_memory_func_ptr();
         if (g_memhook_init_done) {
             cute_log("libcutest INTERNAL ERROR: null tru_realloc().\n");
         }
         if (tru_realloc == NULL) {
-	    return NULL;
+            return NULL;
         }
     }
     retval = tru_realloc(ptr, size);
