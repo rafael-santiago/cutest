@@ -18,9 +18,11 @@ project cutest-test : toolset "gcc-c-app" : $sources, $includes, $cflags, $libra
 cutest-test.prologue() {
     hefesto.sys.echo("*** NOW RUNNING cutest's UNIT TESTS... wait...\n\n");
     $ldflags.add_item("../lib/libcutest.a");
-	if (hefesto.sys.os_name() != "windows") {
-		$ldflags.add_item("-ldl");
-	}
+    if (hefesto.sys.os_name() == "linux") {
+        $ldflags.add_item("-ldl");
+    } else if (hefesto.sys.os_name() == "freebsd") {
+        $ldflags.add_item("-lexecinfo");
+    }
     $sources.ls(".*\\.c$");
 }
 

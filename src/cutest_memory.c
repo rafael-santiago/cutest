@@ -14,6 +14,8 @@
 #include <windows.h>
 #endif
 
+#ifndef __FreeBSD__
+
 static void *(*tru_calloc)(size_t, size_t) = NULL;
 
 static void *(*tru_malloc)(size_t) = NULL;
@@ -127,3 +129,9 @@ void *realloc(void *ptr, size_t size) {
     }
     return retval;
 }
+
+#else
+
+void init_memory_func_ptr() { }
+
+#endif

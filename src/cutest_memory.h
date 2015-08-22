@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__FreeBSD__)
 
 void *calloc(size_t nmemb, size_t size);
 
@@ -24,9 +24,9 @@ void free(void *ptr);
 
 void *realloc(void *ptr, size_t size);
 
-void init_memory_func_ptr();
-
 #endif
+
+void init_memory_func_ptr();
 
 #ifdef __cplusplus
 }
