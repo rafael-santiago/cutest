@@ -12,10 +12,10 @@ This header has lots of macro definitions including macros for test assertions, 
 
 Basically the ``main`` function from your test binary should include a call to the unit test entry point:
 
-	int main(int argc, char **argv) {
-	    CUTE_RUN(entry);
-	    return 0;
-	}
+        int main(int argc, char **argv) {
+            CUTE_RUN(entry);
+            return 0;
+        }
 
 But for convenience ``cutest`` brings a short way to define it:
 
@@ -23,21 +23,21 @@ But for convenience ``cutest`` brings a short way to define it:
 
 The entry point is merely an unit test case which must be declared using special definition macros:
 
-	CUTE_TEST_CASE(entry)
-	    (...)
-	CUTE_TEST_CASE_END
+        CUTE_TEST_CASE(entry)
+            (...)
+        CUTE_TEST_CASE_END
 
 The entry point is the place where you really should call your test-cases. The following
 macro is destinated to call a ``test-case``:
 
-	CUTE_RUN_TEST(my_previous_well_defined_test_case);
+        CUTE_RUN_TEST(my_previous_well_defined_test_case);
 
 The ``test-cases`` should use the same definition schema that is used with the ``entry-point``. Look an
 example:
 
-	CUTE_TEST_CASE(one_should_differ_zero)
-	    CUTE_CHECK("0 == 1!!", 1 != 0);
-	CUTE_TEST_CASE_END
+        CUTE_TEST_CASE(one_should_differ_zero)
+            CUTE_CHECK("0 == 1!!", 1 != 0);
+        CUTE_TEST_CASE_END
 
 The example above will break if for some reason one be equals to zero. In this case the error message
 passed as first argument will be shown. The second argument is the logical test assertion.
@@ -106,7 +106,7 @@ Implements a generic assertion.
 
 Example:
 
-	CUTE_CHECK("boo!", strcmp(buffer, "foobar") != 0);
+        CUTE_CHECK("boo!", strcmp(buffer, "foobar") != 0);
 
 ### CUTE_CHECK_EQ()
 
@@ -116,7 +116,7 @@ Implements an ``equals-to`` assertion.
 
 Example:
 
-	CUTE_CHECK_EQ("error exit_code != 0", x, 0);
+        CUTE_CHECK_EQ("error exit_code != 0", x, 0);
 
 ### CUTE_CHECK_NEQ()
 
@@ -126,7 +126,7 @@ Implements a ``not-equals-to`` assertion.
 
 Example:
 
-	CUTE_CHECK_NEQ("error x == -1", x, -1);
+        CUTE_CHECK_NEQ("error x == -1", x, -1);
 
 ### CUTE_CHECK_LE()
 
@@ -136,7 +136,7 @@ Implements a ``less-than`` assertion.
 
 Example:
 
-	CUTE_CHECK_LE("x > 19", x, 20);
+        CUTE_CHECK_LE("x > 19", x, 20);
 
 ### CUTE_CHECK_LEQ()
 
@@ -146,7 +146,7 @@ Implements a ``less-than-or-equals-to`` assertion.
 
 Example:
 
-	CUTE_CHECK_LEQ("x >= 21", x, 20);
+        CUTE_CHECK_LEQ("x >= 21", x, 20);
 
 ### CUTE_CHECK_GR()
 
@@ -156,7 +156,7 @@ Implements a ``greater-than`` assertion.
 
 Example:
 
-	CUTE_CHECK_GR("x <= 99", x, 100);
+        CUTE_CHECK_GR("x <= 99", x, 100);
 
 ### CUTE_CHECK_GEQ()
 
@@ -166,21 +166,21 @@ Implements a ``greater-than-or-equals-to`` assertion.
 
 Example:
 
-	CUTE_CHECK_GEQ("x <= 19", x, 20);
+        CUTE_CHECK_GEQ("x <= 19", x, 20);
 
 ## How can I print the current case name?
 
 Sometimes for debug issues you may need to print this piece of information. So you could try this:
 
-	printf("Oh my God! Houston we got Raptors in %s\n", CUTE_CASE_NAME);
+        printf("Oh my God! Houston we got Raptors in %s\n", CUTE_CASE_NAME);
 
 Or:
 
-	cute_log("Oh my God! Houston, we got Raptors in %s!\n", CUTE_CASE_NAME);
+        cute_log("Oh my God! Houston, we got Raptors in %s!\n", CUTE_CASE_NAME);
 
 Or still:
 
-	cute_log("Oh my God! Houston, we got Raptors in $CASE_NAME!\n");
+        cute_log("Oh my God! Houston, we got Raptors in $CASE_NAME!\n");
 
 ## How to link my test with cutest?
 
@@ -193,6 +193,8 @@ Or still (if you put ``libcutest`` in a well-known place):
 ``gcc your-test.c -oyour-test -lcutest``
 
 Being on ``Linux`` is also necessary use the additional link-flag ``-ldl``.
+
+On ``FreeBSD`` you need to use the additional link-flag ``-lexecinfo``.
 
 ## Dumping test log to a file
 
@@ -213,6 +215,8 @@ When you try to read an unknown option the return is always ``NULL`` and ``flag 
 ## Detecting memory leaks
 
 Firstly be aware that the [``valgrind``](http://valgrind.org) usage is the best way to catch this kind of [raptors](https://xkcd.com/292/) inside your code. However ``cutest`` brings a minimal system that performs memory leak detection. It could be a profitable way to detect this kind of issue as soon as possible. Because you will be looking for memory leaks being still on test phase.
+
+This feature is only available on ``Linux`` and ``Windows``.
 
 The usage of this system must be flagged passing the option ``--cutest-leak-check`` to your unit test binary. Something like:
 
