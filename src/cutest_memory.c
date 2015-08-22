@@ -52,7 +52,9 @@ void init_memory_func_ptr() {
 void *calloc(size_t nmemb, size_t size) {
     void *retval = NULL;
     if (tru_calloc == NULL) {
-//        init_memory_func_ptr();
+#ifdef _WIN32
+        init_memory_func_ptr();
+#endif
         if (g_memhook_init_done) {
             cute_log("libcutest INTERNAL ERROR: null tru_calloc().\n");
         }
@@ -70,7 +72,9 @@ void *calloc(size_t nmemb, size_t size) {
 void *malloc(size_t size) {
     void *retval = NULL;
     if (tru_malloc == NULL) {
-//        init_memory_func_ptr();
+#ifdef _WIN32
+        init_memory_func_ptr();
+#endif
         if (g_memhook_init_done) {
             cute_log("libcutest INTERNAL ERROR: null tru_malloc().\n");
         }
@@ -87,7 +91,9 @@ void *malloc(size_t size) {
 
 void free(void *ptr) {
     if (tru_free == NULL) {
-//        init_memory_func_ptr();
+#ifdef _WIN32
+        init_memory_func_ptr();
+#endif
         if (g_memhook_init_done) {
             cute_log("libcutest INTERNAL ERROR: null tru_free().\n");
         }
@@ -104,7 +110,9 @@ void free(void *ptr) {
 void *realloc(void *ptr, size_t size) {
     void *retval = NULL;
     if (tru_realloc == NULL) {
-//        init_memory_func_ptr();
+#ifdef _WIN32
+        init_memory_func_ptr();
+#endif
         if (g_memhook_init_done) {
             cute_log("libcutest INTERNAL ERROR: null tru_realloc().\n");
         }
