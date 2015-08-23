@@ -14,6 +14,14 @@
 extern "C" {
 #endif
 
+extern void *(*tru_calloc)(size_t, size_t);
+
+extern void *(*tru_malloc)(size_t);
+
+extern void *(*tru_free)(void *);
+
+extern void *(*tru_realloc)(void *, size_t);
+
 #if !defined(_WIN32) && !defined(__FreeBSD__)
 
 void *calloc(size_t nmemb, size_t size);

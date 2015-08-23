@@ -20,7 +20,7 @@ static int g_temp_cute_leak_check = 0;
 
 #define new_cute_mmap_ctx(m) ( g_temp_cute_leak_check = g_cute_leak_check,\
                                g_cute_leak_check = 0,\
-                               (m) = malloc(sizeof(struct cute_mmap_ctx)),\
+                               (m) = tru_malloc(sizeof(struct cute_mmap_ctx)),\
                                (m)->next = NULL,\
                                (m)->line_nr = g_cute_last_exec_line,\
                                strncpy((m)->file_path, g_cute_last_ref_file, sizeof((m)->file_path)-1),\
@@ -139,7 +139,7 @@ void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
     g_cute_leak_check = 0;
     for (t = p = mmap; t != NULL; p = t) {
         t = p->next;
-        free(p);
+        tru_free(p);
     }
     g_cute_leak_check = temp;
 #ifndef _WIN32

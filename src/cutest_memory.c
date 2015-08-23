@@ -16,13 +16,13 @@
 
 #ifndef __FreeBSD__
 
-static void *(*tru_calloc)(size_t, size_t) = NULL;
+void *(*tru_calloc)(size_t, size_t) = NULL;
 
-static void *(*tru_malloc)(size_t) = NULL;
+void *(*tru_malloc)(size_t) = NULL;
 
-static void *(*tru_free)(void *) = NULL;
+void *(*tru_free)(void *) = NULL;
 
-static void *(*tru_realloc)(void *, size_t) = NULL;
+void *(*tru_realloc)(void *, size_t) = NULL;
 
 static int g_memhook_init_done = 0;
 
