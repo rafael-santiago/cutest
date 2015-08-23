@@ -14,6 +14,8 @@
 #include <windows.h>
 #endif
 
+#ifndef __FreeBSD__
+
 void *(*tru_calloc)(size_t, size_t) = NULL;
 
 void *(*tru_malloc)(size_t) = NULL;
@@ -28,9 +30,6 @@ void init_memory_func_ptr() {
     if (tru_calloc != NULL && tru_malloc != NULL && tru_realloc != NULL && tru_free != NULL) {
         return;
     }
-#ifdef __FreeBSD__
-    printf("\b");  //  WARN(Santiago): this is nasty, I know... for awhile I'm sorry!!
-#endif
 #ifndef _WIN32
     void *handle = (void *)-1;
     tru_calloc = (void *)dlsym(handle, "calloc");
@@ -130,3 +129,9 @@ void *realloc(void *ptr, size_t size) {
     }
     return retval;
 }
+
+#else
+
+void init_memory_func_ptr() { }
+
+#endif
