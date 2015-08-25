@@ -147,10 +147,8 @@ CUTE_TEST_CASE(entry)
     CUTE_RUN_TEST_WITH_FIXTURE(fixture_test);
     CUTE_CHECK_EQ("g_counter != 2", g_counter, 2);
     CUTE_RUN_TEST(CUTE_GET_OPTION_MACRO_test);
-#ifndef __FreeBSD__
     CUTE_RUN_TEST(cute_mmap_ctx_general_tests);
     CUTE_RUN_TEST(leak_check_tests);
-#endif
     CUTE_RUN_TEST(alien_test_case);
     CUTE_RUN_TEST_WITH_FIXTURE(alien_fixture_test_case);
 CUTE_TEST_CASE_END

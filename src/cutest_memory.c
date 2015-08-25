@@ -14,7 +14,15 @@
 #include <windows.h>
 #endif
 
-#ifndef __FreeBSD__
+#ifndef _WIN32
+
+#ifndef RTLD_NEXT
+
+#define RTLD_NEXT -1
+
+#endif
+
+#endif
 
 void *(*tru_calloc)(size_t, size_t) = NULL;
 
@@ -31,7 +39,7 @@ void init_memory_func_ptr() {
         return;
     }
 #ifndef _WIN32
-    void *handle = (void *)-1;
+    void *handle = (void *)RTLD_NEXT;
     tru_calloc = (void *)dlsym(handle, "calloc");
     tru_malloc = (void *)dlsym(handle, "malloc");
     tru_free = (void *)dlsym(handle, "free");
@@ -54,7 +62,7 @@ void init_memory_func_ptr() {
 void *calloc(size_t nmemb, size_t size) {
     void *retval = NULL;
     if (tru_calloc == NULL) {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__FreeBSD__)
         init_memory_func_ptr();
 #endif
         if (g_memhook_init_done) {
@@ -74,7 +82,7 @@ void *calloc(size_t nmemb, size_t size) {
 void *malloc(size_t size) {
     void *retval = NULL;
     if (tru_malloc == NULL) {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__FreeBSD__)
         init_memory_func_ptr();
 #endif
         if (g_memhook_init_done) {
@@ -93,7 +101,7 @@ void *malloc(size_t size) {
 
 void free(void *ptr) {
     if (tru_free == NULL) {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__FreeBSD__)
         init_memory_func_ptr();
 #endif
         if (g_memhook_init_done) {
@@ -112,7 +120,7 @@ void free(void *ptr) {
 void *realloc(void *ptr, size_t size) {
     void *retval = NULL;
     if (tru_realloc == NULL) {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__FreeBSD__)
         init_memory_func_ptr();
 #endif
         if (g_memhook_init_done) {
@@ -129,9 +137,3 @@ void *realloc(void *ptr, size_t size) {
     }
     return retval;
 }
-
-#else
-
-void init_memory_func_ptr() { }
-
-#endif
