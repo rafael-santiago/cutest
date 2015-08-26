@@ -10,8 +10,10 @@ include ~/toolsets/gcc/gcc-lib.hsl
 var sources type list;
 var includes type list;
 var cflags type list;
+var libraries type list;
+var ldflags type list;
 
-project cutest : toolset "gcc-c-lib" : $sources, $includes, $cflags, "libcutest.a" ;
+project cutest : toolset "gcc-c-lib" : $sources, $includes, $cflags, $libraries, $ldflags, "libcutest.a" ;
 
 cutest.prologue() {
     hefesto.sys.echo("*** NOW BUILDING libcutest.a... wait...\n\n");
