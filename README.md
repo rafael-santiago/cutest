@@ -25,13 +25,13 @@ Maybe you should read the [documentation](https://github.com/rafael-santiago/cut
 
 ### Note for Visual Studio users
 
-However if you want to build ``cutest`` under ``MSVC`` you need to use ``Forgefile-msvc.hsl`` instead of the default ``Forgefile.hsl`` script.
+If you want to build ``cutest`` under ``MSVC`` you need to use ``Forgefile-msvc.hsl`` instead of the default ``Forgefile.hsl`` script.
 For this goal the build command changes a little. Being inside the cutest's ``src`` subdirectory:
 
 ``hefesto --forgefile=Forgefile-msvc.hsl --Forgefile-msvc-projects=cutest``
 
 After run the command above a file named ``libcutest.lib`` will be generated inside ``src/lib`` path.
-Note that use ``cutest`` on ``MSVC`` is a little bit tricky. It envolves composite the ``cutest`` with your the current ``msvcrt.lib``
+Note that use ``cutest`` on ``MSVC`` is a little bit tricky. It envolves composite the ``cutest`` with your current ``msvcrt.lib``
 (it explains why the ``cutest.lib`` is so huge).
 
 Another point is that this experimental build was written for ``Visual Studio 2012`` only.
