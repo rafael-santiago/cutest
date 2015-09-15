@@ -17,10 +17,10 @@ project cutest-test : toolset "vc110-app" : $sources, $includes, $cflags, $libra
 
 cutest-test.prologue() {
     hefesto.sys.echo("*** NOW RUNNING cutest's UNIT TESTS... wait...\n\n");
-	$ldflags = hefesto.sys.get_option("ldflags");
+    $ldflags = hefesto.sys.get_option("ldflags");
     $ldflags.add_item("../lib/libcutest.lib");    
     $sources.ls(".*\\.c$");
-	$cflags = hefesto.sys.get_option("cflags");
+    $cflags = hefesto.sys.get_option("cflags");
 }
 
 cutest-test.epilogue() {

@@ -16,18 +16,18 @@ var cflags type list;
 var libraries type list;
 var ldflags type list;
 
-project cutest : toolset "vc110-lib" : $sources, $includes, $cflags, $libraries, $ldflags, "libcutest.lib";
+project cutest : toolset "vc110-lib" : $sources, $includes, $cflags, $libraries, $ldflags, "libcuteststaged.lib";
 
 cutest.prologue() {
-	hefesto.sys.echo("*** NOW BUILDING libcutest.lib... wait...\n\n");
-	$sources.ls(".*\\.c$");
-	$cflags = hefesto.sys.get_option("cflags");
-	$ldflags = hefesto.sys.get_option("ldflags");
+    hefesto.sys.echo("*** NOW BUILDING libcutest.lib... wait...\n\n");
+    $sources.ls(".*\\.c$");
+    $cflags = hefesto.sys.get_option("cflags");
+    $ldflags = hefesto.sys.get_option("ldflags");
 }
 
 function composite_libcutest() : result type int {
-	vc110_vcvarsall("");
-	var msvcrtlib type string;
+    vc110_vcvarsall("");
+    var msvcrtlib type string;
     var vspath type string;
     var compile_model type list;
     $vspath = hefesto.sys.env("VS110COMNTOOLS");
@@ -41,18 +41,13 @@ function composite_libcutest() : result type int {
             $msvcrtlib = "msvcrtd.lib";
         }
     }
-	$msvcrtlib = "\"" + hefesto.sys.make_path($vspath, $msvcrtlib) + "\"";
-	var composite_command type string;
-	$composite_command = "lib.exe /OUT:lib\\libcuteststaged.lib lib\\libcutest.lib " + $msvcrtlib;
+    $msvcrtlib = "\"" + hefesto.sys.make_path($vspath, $msvcrtlib) + "\"";
+    var composite_command type string;
+    $composite_command = "lib.exe /OUT:lib\\libcutest.lib lib\\libcuteststaged.lib " + $msvcrtlib;
     var exit_code type int;
-	$exit_code = hefesto.sys.run($composite_command);
+    $exit_code = hefesto.sys.run($composite_command);
     if ($exit_code == 0) {
-        hefesto.sys.rm("lib\\libcutest.lib");
-        $exit_code = 1;
-        if (hefesto.sys.cp("lib\\libcuteststaged.lib", "lib\\libcutest.lib") == 1) {
-            $exit_code = 0;
-        }
-        hefesto.sys.rm("lib\\libcuteststaged.lib");        
+        hefesto.sys.rm("lib\\libcuteststaged.lib");
     }
     result $exit_code;
 }
@@ -62,7 +57,7 @@ cutest.epilogue() {
         hefesto.sys.echo("\n*** libcutest.lib WAS BUILT.\n\n");
         var exit_code type int;
         $exit_code = composite_libcutest();
-		if ($exit_code != 0) {
+        if ($exit_code != 0) {
             hefesto.sys.echo("ERROR: libcutest composition error!\n");
             hefesto.project.abort(1);
         }        
