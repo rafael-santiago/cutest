@@ -23,7 +23,7 @@ on your system before going ahead.
 
 Maybe you should read the [documentation](https://github.com/rafael-santiago/cutest/blob/master/doc/README.md) before starting.
 
-### Note for visual Studio users
+### Note for Visual Studio users
 
 However if you want to build ``cutest`` under ``MSVC`` you need to use ``Forgefile-msvc.hsl`` instead of the default ``Forgefile.hsl`` script.
 For this goal the build command changes a little. Being inside the cutest's ``src`` subdirectory:
