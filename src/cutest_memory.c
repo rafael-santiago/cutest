@@ -35,17 +35,7 @@ void *(*tru_realloc)(void *, size_t) = NULL;
 static int g_memhook_init_done = 0;
 
 void init_memory_func_ptr() {
-    if (tru_calloc != NULL && tru_malloc != NULL && tru_realloc != NULL && tru_free != NULL) {
-        return;
-    }
-#ifndef _WIN32
-    void *handle = (void *)RTLD_NEXT;
-    tru_calloc = (void *)dlsym(handle, "calloc");
-    tru_malloc = (void *)dlsym(handle, "malloc");
-    tru_free = (void *)dlsym(handle, "free");
-    tru_realloc = (void *)dlsym(handle, "realloc");
-    g_memhook_init_done = 1;
-#else
+#ifdef _WIN32
     HMODULE handle = NULL;
     char *msvcr_filenames[] = {
         "MSVCRT.dll",
@@ -64,8 +54,20 @@ void init_memory_func_ptr() {
         "MSVCR120.dll",
         "MSCVR120d.dll"
     };
-    size_t msvcr_filesnames_count = sizeof(msvcr_filenames) / sizeof(msvcr_filenames[0]);
+    size_t msvcr_filenames_count = sizeof(msvcr_filenames) / sizeof(msvcr_filenames[0]);
     size_t m = 0;
+#endif
+    if (tru_calloc != NULL && tru_malloc != NULL && tru_realloc != NULL && tru_free != NULL) {
+        return;
+    }
+#ifndef _WIN32
+    void *handle = (void *)RTLD_NEXT;
+    tru_calloc = (void *)dlsym(handle, "calloc");
+    tru_malloc = (void *)dlsym(handle, "malloc");
+    tru_free = (void *)dlsym(handle, "free");
+    tru_realloc = (void *)dlsym(handle, "realloc");
+    g_memhook_init_done = 1;
+#else
     if (handle == NULL) {
         for (m = 0; m < msvcr_filenames_count && handle == NULL; m++) {
             handle = GetModuleHandle(msvcr_filenames[m]);

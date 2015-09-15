@@ -44,11 +44,12 @@ extern "C" {
 #define CUTE_CHECK_GEQ(msg, a, b) CUTE_CHECK(msg, (a) >= (b))
 
 #define CUTE_RUN_TEST(test) do {\
+                            char *msg = NULL;\
                             if (g_cute_user_template[0] == 0) cute_log("-- running %s...\n", #test);\
                             g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__;\
                             g_cute_test_name = #test;\
                             g_cute_test_status = NULL;\
-                            char *msg = test();\
+                            msg = test();\
                             g_cute_ran_tests++;\
                             if (msg != NULL) { g_cute_test_status = CUTE_FAILED_LABEL; return msg; }\
                             g_cute_test_status = CUTE_PASSED_LABEL;\
@@ -56,6 +57,7 @@ extern "C" {
                          } while (0)
 
 #define CUTE_RUN_TEST_WITH_FIXTURE(test) do {\
+                            char *msg = NULL;\
                             g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__;\
                             g_cute_test_name = #test;\
                             g_cute_fixture_setup = test ## _setup;\
@@ -63,7 +65,7 @@ extern "C" {
                             test ## _setup();\
                             g_cute_fixture_setup = NULL;\
                             if (g_cute_user_template[0] == 0) cute_log("-- running %s...\n", #test);\
-                            char *msg = test();\
+                            msg = test();\
                             g_cute_ran_tests++;\
                             test ## _teardown();\
                             g_cute_fixture_teardown = NULL;\

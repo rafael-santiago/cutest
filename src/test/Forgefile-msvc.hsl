@@ -1,0 +1,36 @@
+#
+#                               Copyright (C) 2015 by Rafael Santiago
+#
+# This is a free software. You can redistribute it and/or modify under
+# the terms of the GNU General Public License version 2.
+#
+#
+include ~/toolsets/vc/vc110-app.hsl
+
+var sources type list;
+var includes type list;
+var cflags type list;
+var libraries type list;
+var ldflags type list;
+
+project cutest-test : toolset "vc110-app" : $sources, $includes, $cflags, $libraries, $ldflags, "cutest.exe";
+
+cutest-test.prologue() {
+    hefesto.sys.echo("*** NOW RUNNING cutest's UNIT TESTS... wait...\n\n");
+	$ldflags = hefesto.sys.get_option("ldflags");
+    $ldflags.add_item("../lib/libcutest.lib");    
+    $sources.ls(".*\\.c$");
+	$cflags = hefesto.sys.get_option("cflags");
+}
+
+cutest-test.epilogue() {
+    if (hefesto.sys.last_forge_result() == 0) {
+        var exit_code type int;
+        $exit_code = hefesto.sys.run("bin\\cutest.exe --foo=bar");
+        if ($exit_code != 0) {
+            hefesto.sys.echo("\n~~~~ UNIT TEST ERROR.\n\n");
+            hefesto.project.abort($exit_code);
+        }
+        hefesto.sys.echo("\n*** BUILD SUCCESS.\n\n");
+    }
+}

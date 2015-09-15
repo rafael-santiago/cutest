@@ -11,6 +11,12 @@
 #include <string.h>
 #include <ctype.h>
 
+#if _MSC_VER
+#include <BaseTsd.h>
+
+#define ssize_t SSIZE_T
+#endif
+
 int g_cute_ran_tests = 0;
 
 int g_cute_general_counter = 0;
@@ -371,7 +377,7 @@ void cute_log_memory_leak() {
         if (template_path == NULL) {
             cute_log("Id=%l Address=%m File=%s [The last check before leak was at line #%d] < ", mp->id, mp->addr, mp->file_path, mp->line_nr);
             for (a = 0; a < mp->size; a++) {
-                if (isprint(((char *)mp->addr)[a])) {
+                if (isprint(((char *)mp->addr)[a] & 0xff)) {
                     cute_log("%c", ((char *)mp->addr)[a]);
                 } else {
                     cute_log(".");

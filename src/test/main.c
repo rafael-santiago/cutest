@@ -135,7 +135,7 @@ CUTE_TEST_CASE(leak_check_tests)
         CUTE_CHECK("g_cute_mmap != NULL", g_cute_mmap == NULL);
         g_cute_leak_check = 0;
     } else {
-        cute_log("WARNING: Skipped test. Unable to run \"$CASE_NAME\". You need to disable cute's memory leak check system in order to run this.\n");
+        cute_log("WARNING: Skipped test. Unable to run \"$CASE_NAME\". You need to disable cutest's memory leak check system in order to run this.\n");
     }
 CUTE_TEST_CASE_END
 
