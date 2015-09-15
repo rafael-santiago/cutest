@@ -46,7 +46,31 @@ void init_memory_func_ptr() {
     tru_realloc = (void *)dlsym(handle, "realloc");
     g_memhook_init_done = 1;
 #else
-    HMODULE handle = GetModuleHandle("MSVCRT.dll");
+    HMODULE handle = NULL;
+    char *msvcr_filenames[] = {
+        "MSVCRT.dll",
+        "MSVCR70.dll",
+        "MSVCR70d.dll",
+        "MSVCR71.dll",
+        "MSVCR71d.dll",
+        "MSVCR80.dll",
+        "MSCVR80d.dll",
+        "MSVCR90.dll",
+        "MSVCR90d.dll",
+        "MSVCR100.dll",
+        "MSVCR100d.dll",
+        "MSVCR110.dll",
+        "MSVCR110d.dll",
+        "MSVCR120.dll",
+        "MSCVR120d.dll"
+    };
+    size_t msvcr_filesnames_count = sizeof(msvcr_filenames) / sizeof(msvcr_filenames[0]);
+    size_t m = 0;
+    if (handle == NULL) {
+        for (m = 0; m < msvcr_filenames_count && handle == NULL; m++) {
+            handle = GetModuleHandle(msvcr_filenames[m]);
+        }
+    }
     if (handle != NULL) {
         tru_calloc = (void *)GetProcAddress(handle, "calloc");
         tru_malloc = (void *)GetProcAddress(handle, "malloc");
