@@ -1,6 +1,6 @@
 # Cutest
 
-Cutest is an acronym that can be undestood as ``C`` ``u``nit ``te``st.
+Cutest is an acronym that can be undestood as ``C`` ``u``nit ``test``.
 
 This library brings a bunch of macros in order to guide the implementation of unit tests for ``C`` projects.
 
