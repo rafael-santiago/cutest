@@ -185,8 +185,8 @@ In this case you should use the ``CUTE_ASSERT`` macro group instead of ``CUTE_CH
 |``CUTE_ASSERT_LEQ``| ``less-than-or-equals``    | ``CUTE_ASSERT_LEQ(<a>, <b>)``               | ``CUTE_ASSERT_LEQ(x, 0)``  |
 |``CUTE_ASSERT_GEQ``| ``greater-than-or-equals`` | ``CUTE_ASSERT_GEQ(<a>, <b>)``               | ``CUTE_ASSERT_GEQ(x, -1)`` |
 
-However, I think that the lack of good custom assertion error messages could sometimes obfuscate the test report and as result
-it could consume more time on understanding and correct test/software fixing. You should use it with moderation.
+However, I think that the lack of good custom assertion error messages can sometimes obfuscate the test report and as result
+it also can consume more time on understanding and correct test/software fixing. In my opinion you should use it with moderation.
 
 ## How can I print the current case name?
 
