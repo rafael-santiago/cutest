@@ -43,6 +43,22 @@ extern "C" {
 
 #define CUTE_CHECK_GEQ(msg, a, b) CUTE_CHECK(msg, (a) >= (b))
 
+#define CUTE_ASSERT_CHECK(msg, chk) do { g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__; g_cute_test_status = CUTE_PASSED_LABEL; if ((chk) == 0) { g_cute_test_status = CUTE_FAILED_LABEL; g_cute_assertion_message = "("msg") is false"; cute_log("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); cute_close_log_fd(); return "("msg") is false"; } } while (0)
+
+#define CUTE_ASSERT(chk) CUTE_ASSERT_CHECK(#chk, chk)
+
+#define CUTE_ASSERT_EQ(a, b) CUTE_ASSERT_CHECK(#a " == " #b, (a) == (b))
+
+#define CUTE_ASSERT_NEQ(a, b) CUTE_ASSERT_CHECK(#a " != " #b, (a) != (b))
+
+#define CUTE_ASSERT_LE(a, b) CUTE_ASSERT_CHECK(#a " < " #b, (a) < (b))
+
+#define CUTE_ASSERT_GR(a, b) CUTE_ASSERT_CHECK(#a " > " #b, (a) > (b))
+
+#define CUTE_ASSERT_LEQ(a, b) CUTE_ASSERT_CHECK(#a " <= " #b, (a) <= (b))
+
+#define CUTE_ASSERT_GEQ(a, b) CUTE_ASSERT_CHECK(#a " >= " #b, (a) >= (b))
+
 #define CUTE_RUN_TEST(test) do {\
                             char *msg = NULL;\
                             if (g_cute_user_template[0] == 0) cute_log("-- running %s...\n", #test);\

@@ -168,6 +168,26 @@ Example:
 
         CUTE_CHECK_GEQ("x <= 19", x, 20);
 
+### Ok, maybe you do not want to specify error messages on assertions
+
+In this case you should use the ``CUTE_ASSERT`` macro group instead of ``CUTE_CHECK``. So take a look at
+``Table 1`` to know more details about them.
+
+**Table 1**: Single assertion macros with no custom messages.
+
+|     *Macro*       |       *Assertion type*     |                 *Prototype*                 |   *Usage example*          |
+|:-----------------:|:--------------------------:|:-------------------------------------------:|:--------------------------:|
+|``CUTE_ASSERT``    | ``generic``                | ``CUTE_ASSERT(<logical-assertion>)``        | ``CUTE_ASSERT(0 == 1)``    |
+|``CUTE_ASSERT_EQ`` | ``equals``                 | ``CUTE_ASSERT_EQ(<a>, <b>)``                | ``CUTE_ASSERT_EQ(0, 1)``   |
+|``CUTE_ASSERT_NEQ``| ``not-equals``             | ``CUTE_ASSERT_NEQ(<a>, <b>)``               | ``CUTE_ASSERT_NEQ(0, 0)``  |
+|``CUTE_ASSERT_LE`` | ``less-than``              | ``CUTE_ASSERT_LE(<a>, <b>)``                | ``CUTE_ASSERT_LE(0, 0)``   |
+|``CUTE_ASSERT_GR`` | ``greater-than``           | ``CUTE_ASSERT_GR(<a>, <b>)``                | ``CUTE_ASSERT_GR(0, 0)``   |
+|``CUTE_ASSERT_LEQ``| ``less-than-or-equals``    | ``CUTE_ASSERT_LEQ(<a>, <b>)``               | ``CUTE_ASSERT_LEQ(x, 0)``  |
+|``CUTE_ASSERT_GEQ``| ``greater-than-or-equals`` | ``CUTE_ASSERT_GEQ(<a>, <b>)``               | ``CUTE_ASSERT_GEQ(x, -1)`` |
+
+However, I think that the lack of good custom assertion error messages could sometimes obfuscate the test report and as result
+it could consume more time on understanding and correct test/software fixing. You should use it with moderation.
+
 ## How can I print the current case name?
 
 Sometimes for debug issues you may need to print this piece of information. So you could try this:
@@ -248,10 +268,10 @@ The allocation id can be used in order to force a debug break. When you pass to 
 
 It is possible to custom the test logs. ``Cutest`` divide the log in three parts which are: ``header``, ``detail`` and ``footer``.
 
-There are three options that you need to pass to your test binary if you intend to modify the log layout. Table 1 summarizes
+There are three options that you need to pass to your test binary if you intend to modify the log layout. Table 2 summarizes
 these options.
 
-**Table 1**: The ``test-log`` options.
+**Table 2**: The ``test-log`` options.
 
 |          **Option**     |               **Receives**                  |
 |:-----------------------:|--------------------------------------------:|
@@ -261,9 +281,9 @@ these options.
 
 Into the template goes the specific tokens related with the chosen format well as the variables that belongs relevant infos about the logged process.
 
-Table 2 brings a listing of these variables and what they represent.
+Table 3 brings a listing of these variables and what they represent.
 
-**Table 2**: The ``test-log`` recognized variables.
+**Table 3**: The ``test-log`` recognized variables.
 
 |        **Variable**        |          **Represents**                    |
 |:--------------------------:|-------------------------------------------:|
@@ -303,9 +323,9 @@ To use these templates you must indicate them by command line in this following 
 
 ### Customizing the memory leak report
 
-It is possible too. The Table 3 brings all variables recognized by this kind of template.
+It is possible too. The Table 4 brings all variables recognized by this kind of template.
 
-**Table 3**: The ``leak-log`` recognized variables.
+**Table 4**: The ``leak-log`` recognized variables.
 
 |          **Variable**             |                     **Represents**                              |
 |:---------------------------------:|----------------------------------------------------------------:|

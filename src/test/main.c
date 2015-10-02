@@ -26,11 +26,18 @@ CUTE_TEST_CASE(assertion_tests)
     CUTE_CHECK("foo != 0xdeadbeef", foo == 0xdeadbeef);
     CUTE_CHECK_EQ("foo != 0xdeadbeef", foo, 0xdeadbeef);
     CUTE_CHECK_NEQ("foo == 0xf00b45", foo, 0xf00b45);
+    CUTE_ASSERT(foo == 0xdeadbeef);
+    CUTE_ASSERT_EQ(foo, 0xdeadbeef);
+    CUTE_ASSERT_NEQ(foo, 0xf00b45);
     foo = 10;
     CUTE_CHECK_LE("foo > 11", foo, 11);
     CUTE_CHECK_GR("foo > 9", foo, 9);
     CUTE_CHECK_LEQ("foo > 10", foo, 10);
     CUTE_CHECK_GEQ("foo < 10", foo, 10);
+    CUTE_ASSERT_LE(foo, 11);
+    CUTE_ASSERT_GR(foo, 9);
+    CUTE_ASSERT_LEQ(foo, 10);
+    CUTE_ASSERT_GEQ(foo, 10);
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(get_option_tests)
