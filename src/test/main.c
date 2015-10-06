@@ -11,6 +11,8 @@
 
 static int g_counter = 0;
 
+static int g_suite_a = 0;
+
 //  INFO(Santiago): nothing to do here but it breaks the compilation
 //                  if there is something wrong with the macro definition.
 CUTE_TEST_CASE(test_decl)
@@ -146,6 +148,18 @@ CUTE_TEST_CASE(leak_check_tests)
     }
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(test_set_suite_a_flag)
+    g_suite_a = 1;
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE_SUITE(suite_a)
+    CUTE_RUN_TEST(test_set_suite_a_flag);
+CUTE_TEST_CASE_SUITE_END
+
+CUTE_TEST_CASE_SUITE(suite_b)  //  WARN(Santiago): it should never run on normal conditions otherwise it will break things.
+    g_suite_a = 0;
+CUTE_TEST_CASE_SUITE_END
+
 CUTE_TEST_CASE(entry)
     char *retval = get_test_decl_return();
     CUTE_CHECK_EQ("retval != NULL", retval, NULL);
@@ -158,6 +172,9 @@ CUTE_TEST_CASE(entry)
     CUTE_RUN_TEST(leak_check_tests);
     CUTE_RUN_TEST(alien_test_case);
     CUTE_RUN_TEST_WITH_FIXTURE(alien_fixture_test_case);
+    CUTE_RUN_TEST_SUITE(suite_a);
+    CUTE_RUN_TEST_SUITE(suite_b);
+    CUTE_CHECK_EQ("g_suite_a != 1", g_suite_a, 1);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(entry)

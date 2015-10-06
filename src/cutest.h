@@ -60,39 +60,48 @@ extern "C" {
 #define CUTE_ASSERT_GEQ(a, b) CUTE_ASSERT_CHECK(#a " >= " #b, (a) >= (b))
 
 #define CUTE_RUN_TEST(test) do {\
-                            char *msg = NULL;\
-                            if (g_cute_user_template[0] == 0) cute_log("-- running %s...\n", #test);\
-                            g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__;\
-                            g_cute_test_name = #test;\
-                            g_cute_test_status = NULL;\
-                            msg = test();\
-                            g_cute_ran_tests++;\
-                            if (msg != NULL) { g_cute_test_status = CUTE_FAILED_LABEL; return msg; }\
-                            g_cute_test_status = CUTE_PASSED_LABEL;\
-                            cute_log("-- passed.\n");\
+                             if (cute_should_run_test(#test)) {\
+                              char *msg = NULL;\
+                              if (g_cute_user_template[0] == 0) cute_log("-- running %s...\n", #test);\
+                              g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__;\
+                              g_cute_test_name = #test;\
+                              g_cute_test_status = NULL;\
+                              msg = test();\
+                              g_cute_ran_tests++;\
+                              if (msg != NULL) { g_cute_test_status = CUTE_FAILED_LABEL; return msg; }\
+                              g_cute_test_status = CUTE_PASSED_LABEL;\
+                              cute_log("-- passed.\n");\
+                            }\
                          } while (0)
 
 #define CUTE_RUN_TEST_WITH_FIXTURE(test) do {\
-                            char *msg = NULL;\
-                            g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__;\
-                            g_cute_test_name = #test;\
-                            g_cute_fixture_setup = test ## _setup;\
-                            g_cute_fixture_teardown = test ## _teardown;\
-                            test ## _setup();\
-                            g_cute_fixture_setup = NULL;\
-                            if (g_cute_user_template[0] == 0) cute_log("-- running %s...\n", #test);\
-                            msg = test();\
-                            g_cute_ran_tests++;\
-                            test ## _teardown();\
-                            g_cute_fixture_teardown = NULL;\
-                            if (msg != NULL) return msg;\
-                            cute_log("-- passed.\n");\
+                            if (cute_should_run_test(#test)) {\
+                              char *msg = NULL;\
+                              g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__;\
+                              g_cute_test_name = #test;\
+                              g_cute_fixture_setup = test ## _setup;\
+                              g_cute_fixture_teardown = test ## _teardown;\
+                              test ## _setup();\
+                              g_cute_fixture_setup = NULL;\
+                              if (g_cute_user_template[0] == 0) cute_log("-- running %s...\n", #test);\
+                              msg = test();\
+                              g_cute_ran_tests++;\
+                              test ## _teardown();\
+                              g_cute_fixture_teardown = NULL;\
+                              if (msg != NULL) return msg;\
+                              cute_log("-- passed.\n");\
+                            }\
                          } while (0)
 
 
-#define CUTE_RUN_TEST_NTIMES(test, times) do { g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__; for (g_cute_general_counter = 0; g_cute_general_counter < times; g_cute_general_counter++) {\
-                                        CUTE_RUN_TEST(test);\
-                                     } } while (0)
+#define CUTE_RUN_TEST_NTIMES(test, times) do {\
+                                            if (cute_should_run_test(#test)) {\
+                                                g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__;\
+                                                for (g_cute_general_counter = 0; g_cute_general_counter < times; g_cute_general_counter++) {\
+                                                    CUTE_RUN_TEST(test);\
+                                                }\
+                                            }\
+                                          } while (0)
 
 #define CUTE_RUN(entry) do {\
                             char *entry_return = entry();\
@@ -136,6 +145,22 @@ extern "C" {
 #define CUTE_FIXTURE_END  }
 
 #define CUTE_FIXTURE_TEARDOWN(test) void test ## _teardown() {
+
+#define CUTE_TEST_CASE_SUITE(suite) char *suite() {\
+                                      if (!cute_should_run_suite(#suite)) {\
+                                        return NULL;\
+                                      }
+
+#define CUTE_TEST_CASE_SUITE_END  return NULL;\
+                                 }
+
+#define CUTE_DECLARE_TEST_CASE_SUITE(suite) CUTE_DECLARE_TEST_CASE(suite)
+
+#define CUTE_RUN_TEST_SUITE(suite) do {\
+                                    if (cute_should_run_suite(#suite)) {\
+                                     CUTE_RUN_TEST(suite);\
+                                    }\
+                                   } while (0);
 
 #ifndef _WIN32
 
@@ -319,6 +344,10 @@ char *cute_get_option(const char *option, int argc, char **argv, char *default_v
 void cute_log_memory_leak();
 
 void cute_set_log_template(const char *template_file_path);
+
+int cute_should_run_suite(const char *suite);
+
+int cute_should_run_test(const char *test);
 
 #if __cplusplus
 }

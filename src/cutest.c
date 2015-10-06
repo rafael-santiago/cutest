@@ -79,6 +79,8 @@ static void *get_leak_sum();
 
 static ssize_t get_cute_var_data(const char *vname);
 
+static int cute_find_option_in_option_list(const char *option, const char *option_list);
+
 enum {
     kInt,
     kStr,
@@ -420,4 +422,42 @@ void cute_set_log_template(const char *template_file_path) {
     fseek(fp, 0L, SEEK_SET);
     fread(g_cute_user_template, 1, sizeof(g_cute_user_template) - 1, fp);
     fclose(fp);
+}
+
+static int cute_find_option_in_option_list(const char *option, const char *option_list) {
+    const char *op = option_list;
+    if (op == NULL || option == NULL) {
+        return 0;
+    }
+    while (*op != 0) {
+        if (strstr(op, option) == op && (*(op + strlen(option)) == 0 || *(op + strlen(option)) == ',')) {
+            return 1;
+        }
+        while (*op != ',' && *op != 0) {
+            op++;
+        }
+        if (*op == ',') {
+            op++;
+        }
+        while (*op == ' ' || *op == '\n' || *op == '\r') {
+            op++;
+        }
+    }
+    return 0;
+}
+
+int cute_should_run_suite(const char *suite) {
+    const char *cutest_run_suite = CUTE_GET_OPTION("cutest-run-suite");
+    if (cutest_run_suite == NULL || suite == NULL) {
+        return 1;
+    }
+    return cute_find_option_in_option_list(suite, cutest_run_suite);
+}
+
+int cute_should_run_test(const char *test) {
+    const char *cutest_run_test = CUTE_GET_OPTION("cutest-run-test");
+    if (cutest_run_test == NULL || test == NULL) {
+        return 1;
+    }
+    return cute_find_option_in_option_list(test, cutest_run_test);
 }

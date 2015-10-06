@@ -188,11 +188,47 @@ In this case you should use the ``CUTE_ASSERT`` macro group instead of ``CUTE_CH
 However, I think that the lack of good custom assertion error messages can sometimes obfuscate the test report and as result
 it also can consume more time on understanding and on the correct fix applying. In my opinion you should use it with moderation.
 
+## Grouping tests inside suites
+
+For it is necessary use two specific macros. One for suite declaring and another for test suite running. Look:
+
+        CUTE_TEST_CASE_SUITE(my_sample_suite)
+            CUTE_RUN_TEST(my_sample_suite_case_a);
+            CUTE_RUN_TEST(my_sample_suite_case_b);
+            CUTE_RUN_TEST(my_sample_suite_case_z);
+        CUTE_TEST_CASE_SUITE_END
+
+        CUTE_TEST_CASE(tests_entry)
+            CUTE_RUN_TEST_SUITE(my_sample_suite);
+        CUTE_TEST_CASE_END
+
+        CUTE_MAIN(tests_entry)
+
+All tests between ``CUTE_TEST_CASE_SUITE(my_sample_suite)`` and ``CUTE_TEST_CASE_SUITE_END`` are owned by suite ``my_sample_suite``.
+For this suite running is used a special macro called ``CUTE_RUN_TEST_SUITE`` as you can see above on ``tests_entry``.
+
+If you want to run only specific test suites you should use the option ``--cutest-run-suite`` as follows:
+
+``./your-tidy-unit --cutest-run-suite=my_sample_suite,suite_x,suite_y,suite_z``
+
+Tests called directly with ``CUTE_RUN_TEST`` macro are unconditional and for this reason always executed.
+
+If for some reason you need to prototype the suites use the macro ``CUTE_DECLARE_TEST_CASE_SUITE(suite_name)``.
+
+## Running only specific tests
+
+If you just want to run one or few ``test-cases`` you should use the option ``--cutest-run-test`` as follows:
+
+``./your-huge-unit --cutest-run-test=test_a,test_b,test_d,test_w``
+
+In this example only the tests ``test_a``, ``test_b``, ``test_d`` and ``test_w`` will run. Beware that the ``--cutest-run-test``
+option has more precedence than ``--cutest-run-suite`` option.
+
 ## How can I print the current case name?
 
 Sometimes for debug issues you may need to print this piece of information. So you could try this:
 
-        printf("Oh my God! Houston we got Raptors in %s\n", CUTE_CASE_NAME);
+        printf("Oh my God! Houston we got Raptors in %s\n", CUTE_C[AASE_NAME);
 
 Or:
 
