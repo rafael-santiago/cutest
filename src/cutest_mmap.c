@@ -50,6 +50,9 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
                                                       size_t size, void *addr) {
     struct cute_mmap_ctx *head = NULL;
     struct cute_mmap_ctx *p = NULL;
+    if (g_cute_last_ref_file == NULL) {
+        return mmap;
+    }
 #ifndef _WIN32
     pthread_mutex_lock(&mmap_mutex);
 #else

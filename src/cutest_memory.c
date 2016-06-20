@@ -140,6 +140,9 @@ void free(void *ptr) {
     if (g_cute_leak_check) {
         g_cute_mmap = rm_allocation_from_cute_mmap_ctx(g_cute_mmap, ptr);
     }
+    if (ptr == NULL) {
+        return;
+    }
     tru_free(ptr);
 }
 
