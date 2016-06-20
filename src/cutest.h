@@ -29,7 +29,7 @@ extern "C" {
 
 #define CUTE_FAILED_LABEL "failed"
 
-#define CUTE_CHECK(msg, chk) do { g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__; g_cute_test_status = CUTE_PASSED_LABEL; if ((chk) == 0) { g_cute_test_status = CUTE_FAILED_LABEL; g_cute_assertion_message = msg; cute_log("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); cute_close_log_fd(); return msg; } } while (0)
+#define CUTE_CHECK(msg, chk) do { g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__; g_cute_test_status = CUTE_PASSED_LABEL; if ((chk) == 0) { g_cute_test_status = CUTE_FAILED_LABEL; g_cute_assertion_message = msg; cute_log("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); /*cute_close_log_fd();*/ return msg; } } while (0)
 
 #define CUTE_CHECK_EQ(msg, a, b) CUTE_CHECK(msg, (a) == (b))
 
@@ -43,7 +43,7 @@ extern "C" {
 
 #define CUTE_CHECK_GEQ(msg, a, b) CUTE_CHECK(msg, (a) >= (b))
 
-#define CUTE_ASSERT_CHECK(msg, chk) do { g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__; g_cute_test_status = CUTE_PASSED_LABEL; if ((chk) == 0) { g_cute_test_status = CUTE_FAILED_LABEL; g_cute_assertion_message = "("msg") is false"; cute_log("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); cute_close_log_fd(); return "("msg") is false"; } } while (0)
+#define CUTE_ASSERT_CHECK(msg, chk) do { g_cute_last_exec_line = __LINE__; g_cute_last_ref_file = __FILE__; g_cute_test_status = CUTE_PASSED_LABEL; if ((chk) == 0) { g_cute_test_status = CUTE_FAILED_LABEL; g_cute_assertion_message = "("msg") is false"; cute_log("hmm bad, bad bug in %s at line %d: ", __FILE__, __LINE__); /*cute_close_log_fd();*/ return "("msg") is false"; } } while (0)
 
 #define CUTE_ASSERT(chk) CUTE_ASSERT_CHECK(#chk, chk)
 
@@ -116,8 +116,6 @@ extern "C" {
                                     cute_log("*** all tests passed. [%d test(s) ran]\n", g_cute_ran_tests);\
                                 }\
                             } else {\
-                                cute_close_log_fd();\
-                                cute_set_log_template(NULL);\
                                 user_template = cute_get_option("cutest-log-footer", argc, argv, NULL);\
                                 if (user_template != NULL) {\
                                     cute_set_log_template(user_template);\
@@ -126,6 +124,8 @@ extern "C" {
                                 } else {\
                                     cute_log("*** fail: %s [%d test(s) ran]\n", entry_return, g_cute_ran_tests);\
                                 }\
+                                cute_close_log_fd();\
+                                cute_set_log_template(NULL);\
                                 return 1;\
                             }\
                         } while(0);
