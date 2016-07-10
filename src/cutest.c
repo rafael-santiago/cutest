@@ -176,6 +176,20 @@ static ssize_t get_cute_var_data(const char *vname) {
 
 void cute_open_log_fd(const char *filepath) {
     cute_close_log_fd();
+#ifndef _WIN32
+    //  WARN(Santiago): This is a workaround for avoiding the 4k leak which stdio lets.
+    //
+    //                  It is caused due to an allocation done at the first time of printf's functions calling.
+    //
+    //                  It seems to be done for performance issues, but is a kind of annoying. When we are hunting for real leaks.
+    //
+    //                  I observed this problem under FreeBSD and only when logging the test's output for a file different of the stdout.
+    //
+    //                  Anyway, with the following setbuf()'s the 4k alloc is inhibited. What does it stop "leaking".
+    //
+    setbuf(stdout, NULL);
+    setbuf(stderr, NULL);
+#endif
     g_cute_log_fd = fopen(filepath, "wb");
     if (g_cute_log_fd == NULL) {
         printf("cutest WARNING: Unable to create file \"%s\". All will be logged to stdout.\n", filepath);
