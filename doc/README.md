@@ -357,6 +357,10 @@ To use these templates you must indicate them by command line in this following 
 
 ``somewhere/over/the/rainbow/your-test --cutest-log-header=templates/test-log-header.html --cutest-log-detail=templates/test-log-detail.html --cutest-log-footer=templates/test-log-footer.html``
 
+**Remark**: Under ``unix-like`` platforms we call ``setbuf()`` in order to set ``stdout`` and ``stderr`` to ``NULL`` when we
+are logging the test's output to a file. It is done for getting rid of the initial 4k allocation done by the ``stdio`` and
+never freed (for performance issues). When not skipped it can add some noise to your memory leak's reports.
+
 ### Customizing the memory leak report
 
 It is possible too. The Table 4 brings all variables recognized by this kind of template.
