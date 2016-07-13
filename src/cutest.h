@@ -164,6 +164,17 @@ extern "C" {
 
 #ifndef _WIN32
 
+    //  WARN(Santiago): About the "setbuf(stdout, NULL)" and the "setbuf(stderr, NULL)" that you will find inside the following main().
+    //
+    //                  This is a workaround for avoiding the 4k leak which stdio lets.
+    //
+    //                  It is caused due to an allocation done at the first time of printf's functions calling.
+    //
+    //                  It seems to be done for performance issues, but is a kind of annoying. When we are hunting for real leaks.
+    //
+    //                  Anyway, with the following setbuf()'s the 4k alloc is inhibited. What does it stop "leaking".
+    //
+
 #define CUTE_MAIN(entry) void sigint_watchdog(int signum) {\
                           printf("-- CUTE INT TRAP --\n");\
                           if (g_cute_fixture_teardown != NULL) {\
@@ -189,6 +200,8 @@ extern "C" {
                           char *user_template = NULL;\
                           char *leak_id = NULL;\
                           int exit_code = 0;\
+                          setbuf(stdout, NULL);\
+                          setbuf(stderr, NULL);\
                           signal(SIGSEGV, sigsegv_watchdog);\
                           signal(SIGBUS, sigsegv_watchdog);\
                           signal(SIGABRT, sigsegv_watchdog);\
