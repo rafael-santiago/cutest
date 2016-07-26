@@ -8,6 +8,7 @@
 #include "../cutest.h"
 #include "../cutest_mmap.h"
 #include "alien_test_case.h"
+#include <string.h>
 
 static int g_counter = 0;
 
