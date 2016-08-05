@@ -294,7 +294,7 @@ void cute_log(const char *msg, ...) {
                             if (g_cute_test_status == NULL || strcmp(g_cute_test_status, CUTE_PASSED_LABEL) == 0) {
                                 fprintf(g_cute_log_fd, "-");
                             } else {
-                                fprintf(g_cute_log_fd, (char *)cute_vars[vindex].get());
+                                fprintf(g_cute_log_fd, "%s", (char *)cute_vars[vindex].get());
                             }
                         }
                         break;

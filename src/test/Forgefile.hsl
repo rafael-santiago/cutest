@@ -5,15 +5,22 @@
 # the terms of the GNU General Public License version 2.
 #
 #
-include ~/toolsets/gcc/gcc-app.hsl
+include Toolsets.hsl
+include ../Forgeutils.hsl
 
-var sources type list;
-var includes type list;
-var cflags type list;
-var libraries type list;
-var ldflags type list;
+local var sources type list;
+local var includes type list;
+local var cflags type list;
+local var libraries type list;
+local var ldflags type list;
 
-project cutest-test : toolset "gcc-c-app" : $sources, $includes, $cflags, $libraries, $ldflags, "cutest";
+local var toolset_name type string;
+
+cutest-test.preloading() {
+    $toolset_name = get_toolset_basename() + "app";
+}
+
+project cutest-test : toolset $toolset_name : $sources, $includes, $cflags, $libraries, $ldflags, "cutest";
 
 cutest-test.prologue() {
     hefesto.sys.echo("*** NOW RUNNING cutest's UNIT TESTS... wait...\n\n");
