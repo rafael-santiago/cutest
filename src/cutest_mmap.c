@@ -9,7 +9,9 @@
 #include "cutest.h"
 #include <string.h>
 #ifndef _WIN32
+#ifdef HAS_PTHREAD
 #include <pthread.h>
+#endif
 #else
 #include <windows.h>
 #endif
@@ -28,7 +30,11 @@ static int g_temp_cute_leak_check = 0;
 
 #ifndef _WIN32
 
+#ifdef HAS_PTHREAD
+
 pthread_mutex_t mmap_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+#endif
 
 #else
 
@@ -54,7 +60,13 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
         return mmap;
     }
 #ifndef _WIN32
+
+#if HAS_PTHREAD
+
     pthread_mutex_lock(&mmap_mutex);
+
+#endif
+
 #else
     mmap_mutex = CreateMutex(NULL, FALSE, NULL);
     WaitForSingleObject(mmap_mutex, INFINITE);
@@ -79,7 +91,13 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
 #endif
     }
 #ifndef _WIN32
+
+#if HAS_PTHREAD
+
     pthread_mutex_unlock(&mmap_mutex);
+
+#endif
+
 #else
     ReleaseMutex(mmap_mutex);
 #endif
@@ -92,7 +110,13 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
     struct cute_mmap_ctx *burn = NULL;
     struct cute_mmap_ctx *last = NULL;
 #ifndef _WIN32
+
+#if HAS_PTHREAD
+
     pthread_mutex_lock(&mmap_mutex);
+
+#endif
+
 #else
     mmap_mutex = CreateMutex(NULL, FALSE, NULL);
     WaitForSingleObject(mmap_mutex, INFINITE);
@@ -100,7 +124,13 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
     head = mmap;
     if (mmap == NULL) {
 #ifndef _WIN32
+
+#if HAS_PTHREAD
+
         pthread_mutex_unlock(&mmap_mutex);
+
+#endif
+
 #else
         ReleaseMutex(mmap_mutex);
 #endif
@@ -122,7 +152,13 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
         free(burn);
     }
 #ifndef _WIN32
+
+#if HAS_PTHREAD
+
     pthread_mutex_unlock(&mmap_mutex);
+
+#endif
+
 #else
     ReleaseMutex(mmap_mutex);
 #endif
@@ -133,7 +169,13 @@ void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
     struct cute_mmap_ctx *p = NULL, *t = NULL;
     int temp = 0;
 #ifndef _WIN32
+
+#if HAS_PTHREAD
+
     pthread_mutex_lock(&mmap_mutex);
+
+#endif
+
 #else
     mmap_mutex = CreateMutex(NULL, FALSE, NULL);
     WaitForSingleObject(mmap_mutex, INFINITE);
@@ -146,7 +188,13 @@ void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
     }
     g_cute_leak_check = temp;
 #ifndef _WIN32
+
+#if HAS_PTHREAD
+
     pthread_mutex_unlock(&mmap_mutex);
+
+#endif
+
 #else
     ReleaseMutex(mmap_mutex);
 #endif

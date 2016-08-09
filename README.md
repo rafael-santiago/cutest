@@ -23,6 +23,9 @@ on your system before going ahead.
 
 Maybe you should read the [documentation](https://github.com/rafael-santiago/cutest/blob/master/doc/README.md) before starting.
 
+**Tip**: In case of trying to compile it under a ``UNIX`` environment with no support for ``PTHREADS`` before calling ``hefesto``
+you need to edit the file ``src/.ivk`` and erase the ``C Macro`` definition ``-DHAS_PTHREAD`` from ``--cflags`` option.
+
 ### Note for Visual Studio users
 
 If you want to build ``cutest`` under ``MSVC`` you need to use ``Forgefile-msvc.hsl`` instead of the default ``Forgefile.hsl`` script.

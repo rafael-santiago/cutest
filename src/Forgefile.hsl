@@ -27,14 +27,7 @@ cutest.prologue() {
     $sources.ls(".*\\.c$");
     $cflags = hefesto.sys.get_option("cflags");
     if ($toolset_name == "clang-c-lib") {
-        #
-        # WARN(Santiago): Disabling sissy "clanging warnings":
-        #
-        #    "- Hey man... you are trying to print out the address of this void pointer..."
-        #    "- You know, this is pretty unusual for my heuristics which takes in consideration only Calculators & Hello world stuff."
-        #    "- So, try to make it on a Care Bears way... Otherwise I will keep annoying you."
-        #
-        $cflags.add_item("-Wno-format"); # shut up.
+        $cflags.add_item("-Wno-format");
     }
 }
 
