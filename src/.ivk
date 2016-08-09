@@ -1,1 +1,1 @@
---forgefiles=Forgefile.hsl --Forgefile-projects=cutest --obj-output-dir=obj --bin-output-dir=lib --cflags=-DHAS_PTHREAD
+--forgefiles=Forgefile.hsl --Forgefile-projects=cutest --obj-output-dir=obj --bin-output-dir=lib

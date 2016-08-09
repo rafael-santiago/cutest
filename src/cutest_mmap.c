@@ -9,7 +9,7 @@
 #include "cutest.h"
 #include <string.h>
 #ifndef _WIN32
-#ifdef HAS_PTHREAD
+#ifndef HAS_NO_PTHREAD
 #include <pthread.h>
 #endif
 #else
@@ -30,7 +30,7 @@ static int g_temp_cute_leak_check = 0;
 
 #ifndef _WIN32
 
-#ifdef HAS_PTHREAD
+#ifndef HAS_NO_PTHREAD
 
 pthread_mutex_t mmap_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -61,7 +61,7 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
     }
 #ifndef _WIN32
 
-#if HAS_PTHREAD
+#ifndef HAS_NO_PTHREAD
 
     pthread_mutex_lock(&mmap_mutex);
 
@@ -92,7 +92,7 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
     }
 #ifndef _WIN32
 
-#if HAS_PTHREAD
+#ifndef HAS_NO_PTHREAD
 
     pthread_mutex_unlock(&mmap_mutex);
 
@@ -111,7 +111,7 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
     struct cute_mmap_ctx *last = NULL;
 #ifndef _WIN32
 
-#if HAS_PTHREAD
+#ifndef HAS_NO_PTHREAD
 
     pthread_mutex_lock(&mmap_mutex);
 
@@ -125,7 +125,7 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
     if (mmap == NULL) {
 #ifndef _WIN32
 
-#if HAS_PTHREAD
+#ifndef HAS_NO_PTHREAD
 
         pthread_mutex_unlock(&mmap_mutex);
 
@@ -153,7 +153,7 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
     }
 #ifndef _WIN32
 
-#if HAS_PTHREAD
+#ifndef HAS_NO_PTHREAD
 
     pthread_mutex_unlock(&mmap_mutex);
 
@@ -170,7 +170,7 @@ void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
     int temp = 0;
 #ifndef _WIN32
 
-#if HAS_PTHREAD
+#ifndef HAS_NO_PTHREAD
 
     pthread_mutex_lock(&mmap_mutex);
 
@@ -189,7 +189,7 @@ void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
     g_cute_leak_check = temp;
 #ifndef _WIN32
 
-#if HAS_PTHREAD
+#ifndef HAS_NO_PTHREAD
 
     pthread_mutex_unlock(&mmap_mutex);
 
