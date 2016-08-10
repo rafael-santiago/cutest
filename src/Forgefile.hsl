@@ -26,6 +26,9 @@ cutest.prologue() {
     hefesto.sys.echo("*** NOW BUILDING libcutest.a... wait...\n\n");
     $sources.ls(".*\\.c$");
     $cflags = hefesto.sys.get_option("cflags");
+    if (hefesto.sys.os_name() == "minix") {
+        $cflags.add_item("-DHAS_NO_PTHREAD");
+    }
     if ($toolset_name == "clang-c-lib") {
         $cflags.add_item("-Wno-format");
     }
