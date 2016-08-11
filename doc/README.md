@@ -250,7 +250,7 @@ Or still (if you put ``libcutest`` in a well-known place):
 
 Being on ``Linux`` is also necessary use the additional link-flag ``-ldl``.
 
-On ``FreeBSD`` you need to use the additional link-flag ``-lexecinfo``.
+On ``FreeBSD`` and ``MINIX`` you need to use the additional link-flag ``-lexecinfo``.
 
 ## Dumping test log to a file
 
