@@ -11,7 +11,9 @@
 #include <stdio.h>
 #include <signal.h>
 #ifndef _WIN32
+#ifndef NO_CUTEST_BACKTRACING
 #include <execinfo.h>
+#endif
 #endif
 #ifndef _MSC_VER
 #include <unistd.h>
@@ -162,7 +164,7 @@ extern "C" {
                                     }\
                                    } while (0);
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(NO_CUTEST_BACKTRACING)
 
     //  WARN(Santiago): About the "setbuf(stdout, NULL)" and the "setbuf(stderr, NULL)" that you will find inside the following main().
     //
@@ -240,6 +242,71 @@ extern "C" {
                           cute_close_log_fd();\
                           return exit_code;\
                          }
+
+#elif !defined(_WIN32) && defined(NO_CUTEST_BACKTRACING)
+
+#define CUTE_MAIN(entry) void sigint_watchdog(int signum) {\
+                          printf("-- CUTE INT TRAP --\n");\
+                          if (g_cute_fixture_teardown != NULL) {\
+                           g_cute_fixture_teardown();\
+                           g_cute_fixture_teardown = NULL;\
+                          }\
+                         }\
+                         void sigsegv_watchdog(int signum) {\
+                          size_t size;\
+                          printf("-- CUTEST PANIC TRAP --\n");\
+                          if (g_cute_last_exec_line > -1) {\
+                           printf("\n< The last successfully executed line was the line #%d from file \"%s\" >", g_cute_last_exec_line, g_cute_last_ref_file);\
+                          }\
+                          printf("\n\n");\
+                          exit(1);\
+                         }\
+                         int main(int argc, char **argv) {\
+                          char *logpath = NULL;\
+                          char *user_template = NULL;\
+                          char *leak_id = NULL;\
+                          int exit_code = 0;\
+                          setbuf(stdout, NULL);\
+                          setbuf(stderr, NULL);\
+                          signal(SIGSEGV, sigsegv_watchdog);\
+                          signal(SIGBUS, sigsegv_watchdog);\
+                          signal(SIGABRT, sigsegv_watchdog);\
+                          signal(SIGINT, sigint_watchdog);\
+                          signal(SIGTERM, sigint_watchdog);\
+                          init_memory_func_ptr();\
+                          logpath = cute_get_option("cutest-log-path", argc, argv, NULL);\
+                          if (cute_get_option("cutest-leak-check", argc, argv, NULL) != NULL) {\
+                           g_cute_leak_check = 1;\
+                          }\
+                          leak_id = cute_get_option("cutest-leak-id", argc, argv, NULL);\
+                          if (leak_id != NULL) {\
+                           g_cute_leak_id = atoi(leak_id);\
+                          }\
+                          g_cute_argv = argv;\
+                          g_cute_argc = argc;\
+                          if (logpath != NULL) {\
+                           cute_open_log_fd(logpath);\
+                          }\
+                          user_template = cute_get_option("cutest-log-header", argc, argv, NULL);\
+                          if (user_template != NULL) {\
+                           cute_set_log_template(user_template);\
+                           cute_log("");\
+                           cute_set_log_template(NULL);\
+                          }\
+                          user_template = cute_get_option("cutest-log-detail", argc, argv, NULL);\
+                          if (user_template != NULL) {\
+                           cute_set_log_template(user_template);\
+                          }\
+                          CUTE_RUN(entry);\
+                          if (g_cute_leak_check && g_cute_mmap != NULL) {\
+                           cute_log_memory_leak();\
+                           del_cute_mmap_ctx(g_cute_mmap);\
+                           exit_code = 1;\
+                          }\
+                          cute_close_log_fd();\
+                          return exit_code;\
+                         }
+
 
 #else
 
