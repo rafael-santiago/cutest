@@ -33,6 +33,8 @@ cutest-test.prologue() {
         $ldflags.add_item("-lexecinfo");
     } else if (hefesto.sys.os_name() == "sunos") {
         $cflags.add_item("-DNO_CUTEST_BACKTRACING");
+    } else if (hefesto.sys.os_name() == "netbsd") {
+        $ldflags.add_item("-lexecinfo");
     }
     $sources.ls(".*\\.c$");
 }
