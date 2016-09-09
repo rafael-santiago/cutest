@@ -250,7 +250,10 @@ Or still (if you put ``libcutest`` in a well-known place):
 
 Being on ``Linux`` is also necessary use the additional link-flag ``-ldl``.
 
-On ``FreeBSD`` and ``MINIX`` you need to use the additional link-flag ``-lexecinfo``.
+On ``FreeBSD``, ``NetBSD`` and ``MINIX`` you need to use the additional link-flag ``-lexecinfo``.
+
+If you are on ``Solaris`` you need to define the macro ``NO_CUTEST_BACKTRACING``. The related ``GCC`` compiler flag
+is ``-DNO_CUTEST_BACKTRACING``.
 
 ## Dumping test log to a file
 
