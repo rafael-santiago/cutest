@@ -7,6 +7,7 @@
 #
 include Toolsets.hsl
 include Forgeutils.hsl
+include ~/fsutil.hsl
 
 local var sources type list;
 local var includes type list;
@@ -25,14 +26,27 @@ cutest.preloading() {
 cutest.prologue() {
     hefesto.sys.echo("*** NOW BUILDING libcutest.a... wait...\n\n");
     $sources.ls(".*\\.c$");
+
     $cflags = hefesto.sys.get_option("cflags");
+
     if (hefesto.sys.os_name() == "minix") {
         $cflags.add_item("-DHAS_NO_PTHREAD");
     } else if (hefesto.sys.os_name() == "sunos") {
         $cflags.add_item("-DNO_CUTEST_BACKTRACING");
     }
+
     if ($toolset_name == "clang-c-lib") {
         $cflags.add_item("-Wno-format");
+    }
+
+    if (hefesto.sys.os_name() != "windows") {
+        if (isdir("/usr/local/include")) {
+            $includes.add_item("/usr/local/include");
+        }
+
+        if (isdir("/usr/local/lib")) {
+            $libraries.add_item("/usr/local/lib");
+        }
     }
 }
 

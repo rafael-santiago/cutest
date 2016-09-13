@@ -7,6 +7,7 @@
 #
 include Toolsets.hsl
 include ../Forgeutils.hsl
+include ~/fsutil.hsl
 
 local var sources type list;
 local var includes type list;
@@ -24,7 +25,9 @@ project cutest-test : toolset $toolset_name : $sources, $includes, $cflags, $lib
 
 cutest-test.prologue() {
     hefesto.sys.echo("*** NOW RUNNING cutest's UNIT TESTS... wait...\n\n");
+
     $ldflags.add_item("../lib/libcutest.a");
+
     if (hefesto.sys.os_name() == "linux") {
         $ldflags.add_item("-ldl");
     } else if (hefesto.sys.os_name() == "freebsd") {
@@ -35,7 +38,20 @@ cutest-test.prologue() {
         $cflags.add_item("-DNO_CUTEST_BACKTRACING");
     } else if (hefesto.sys.os_name() == "netbsd") {
         $ldflags.add_item("-lexecinfo");
+    } else if (hefesto.sys.os_name() == "openbsd") {
+        $ldflags.add_item("-lexecinfo");
     }
+
+    if (hefesto.sys.os_name() != "windows") {
+        if (isdir("/usr/local/include")) {
+            $includes.add_item("/usr/local/include");
+        }
+
+        if (isdir("/usr/local/lib")) {
+            $libraries.add_item("/usr/local/lib");
+        }
+    }
+
     $sources.ls(".*\\.c$");
 }
 
