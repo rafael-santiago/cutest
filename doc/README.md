@@ -6,44 +6,57 @@ This document summarizes what is necessary to do in order to write unit tests fo
 
 Firstly you need to include the main library header which stands for:
 
+```c
     #include <cutest.h>
+```
 
 This header has lots of macro definitions including macros for test assertions, test running, etc.
 
 Basically the ``main`` function from your test binary should include a call to the unit test entry point:
 
+```c
         int main(int argc, char **argv) {
             CUTE_RUN(entry);
             return 0;
         }
+```
 
 But for convenience ``cutest`` brings a short way to define it:
 
+```c
         CUTE_MAIN(entry)
+```
 
 The entry point is merely an unit test case which must be declared using special definition macros:
 
+```c
         CUTE_TEST_CASE(entry)
             (...)
         CUTE_TEST_CASE_END
+```
 
 The entry point is the place where you really should call your test-cases. The following
 macro is destinated to call a ``test-case``:
 
+```c
         CUTE_RUN_TEST(my_previous_well_defined_test_case);
+```
 
 The ``test-cases`` should use the same definition schema that is used with the ``entry-point``. Look an
 example:
 
+```c
         CUTE_TEST_CASE(one_should_differ_zero)
             CUTE_CHECK("0 == 1!!", 1 != 0);
         CUTE_TEST_CASE_END
+```
 
 The example above will break if for some reason one be equals to zero. In this case the error message
 passed as first argument will be shown. The second argument is the logical test assertion.
 
 If your ``test-case`` needs fixtures you must declare the fixtures using the following schemas:
 
+```c
         CUTE_FIXTURE_SETUP(my_test_case)
             //  Some setup operations goes here.
         CUTE_FIXTURE_END
@@ -59,6 +72,7 @@ If your ``test-case`` needs fixtures you must declare the fixtures using the fol
         CUTE_TEST_CASE(entry)
             CUTE_RUN_TEST_WITH_FIXTURE(my_test_case); // the test invocation macro differs from tests that do not have fixtures.
         CUTE_TEST_CASE_END
+```
 
 Tests with fixtures must define the both fixtures, the ``setup`` and the ``teardown``, otherwise you will get errors related with unresolved externals.
 
@@ -66,6 +80,7 @@ Tests with fixtures must define the both fixtures, the ``setup`` and the ``teard
 
 Sometimes is necessary divide the implementation among several files finding to keep our sanity. Then in this case you should use the macros destinated to do the tests prototypes. Take a look:
 
+```c
         // filesystem_test_cases.h
         #ifndef _FILESYSTEM_TEST_CASES_H
         #define _FILESYSTEM_TEST_CASES_H 1
@@ -79,10 +94,12 @@ Sometimes is necessary divide the implementation among several files finding to 
         CUTE_DECLARE_TEST_CASE_WITH_FIXTURE(test_mkdir);
 
         #endif
+```
 
 Now supposing that ``filesystem_test_cases.c`` has already implemented all you need to do inside of your main source file
 or at least where you plan call your test cases:
 
+```c
         // main.c
         #include "filesystem_test_cases.h"
 
@@ -93,6 +110,7 @@ or at least where you plan call your test cases:
             CUTE_RUN_TEST_WITH_FIXTURE(test_remove);
             CUTE_RUN_TEST_WITH_FIXTURE(test_mkdir);
         CUTE_TEST_CASE_END
+```
 
 ## Available assertion macros
 
@@ -106,7 +124,9 @@ Implements a generic assertion.
 
 Example:
 
+```c
         CUTE_CHECK("boo!", strcmp(buffer, "foobar") != 0);
+```
 
 ### CUTE_CHECK_EQ()
 
@@ -116,7 +136,9 @@ Implements an ``equals-to`` assertion.
 
 Example:
 
+```c
         CUTE_CHECK_EQ("error exit_code != 0", x, 0);
+```
 
 ### CUTE_CHECK_NEQ()
 
@@ -126,7 +148,9 @@ Implements a ``not-equals-to`` assertion.
 
 Example:
 
+```c
         CUTE_CHECK_NEQ("error x == -1", x, -1);
+```
 
 ### CUTE_CHECK_LE()
 
@@ -136,7 +160,9 @@ Implements a ``less-than`` assertion.
 
 Example:
 
+```c
         CUTE_CHECK_LE("x > 19", x, 20);
+```
 
 ### CUTE_CHECK_LEQ()
 
@@ -156,7 +182,9 @@ Implements a ``greater-than`` assertion.
 
 Example:
 
+```c
         CUTE_CHECK_GR("x <= 99", x, 100);
+```
 
 ### CUTE_CHECK_GEQ()
 
@@ -166,7 +194,9 @@ Implements a ``greater-than-or-equals-to`` assertion.
 
 Example:
 
+```c
         CUTE_CHECK_GEQ("x <= 19", x, 20);
+```
 
 ### Ok, maybe you do not want to specify error messages on assertions
 
@@ -192,6 +222,7 @@ it also can consume more time on understanding and on the correct fix applying. 
 
 For it is necessary use two specific macros. One for suite declaring and another for test suite running. Look:
 
+```c
         CUTE_TEST_CASE_SUITE(my_sample_suite)
             CUTE_RUN_TEST(my_sample_suite_case_a);
             CUTE_RUN_TEST(my_sample_suite_case_b);
@@ -203,6 +234,7 @@ For it is necessary use two specific macros. One for suite declaring and another
         CUTE_TEST_CASE_END
 
         CUTE_MAIN(tests_entry)
+```
 
 All tests between ``CUTE_TEST_CASE_SUITE(my_sample_suite)`` and ``CUTE_TEST_CASE_SUITE_END`` are owned by suite ``my_sample_suite``.
 For this suite running is used a special macro called ``CUTE_RUN_TEST_SUITE`` as you can see above on ``tests_entry``.
@@ -228,15 +260,21 @@ option has more precedence than ``--cutest-run-suite`` option.
 
 Sometimes for debug issues you may need to print this piece of information. So you could try this:
 
-        printf("Oh my God! Houston we got Raptors in %s\n", CUTE_C[AASE_NAME);
+```c
+        printf("Oh my God! Houston we got Raptors in %s\n", CUTE_CASE_NAME);
+```
 
 Or:
 
+```c
         cute_log("Oh my God! Houston, we got Raptors in %s!\n", CUTE_CASE_NAME);
+```
 
 Or still:
 
+```c
         cute_log("Oh my God! Houston, we got Raptors in $CASE_NAME!\n");
+```
 
 ## How to link my test with cutest?
 
@@ -263,7 +301,9 @@ To do it use the option ``--cutest-log-path=<filepath>``. This option specifies 
 
 Sometimes is necessary... So to do it you should use the macro ``CUTE_GET_OPTION(<option-name>)``. Supposing that you want to read the option ``--foobar`` try this:
 
+```c
         char *foobar_value = CUTE_GET_OPTION("foobar");
+```
 
 Note that the options should be passed in this form to your test binary:
 
@@ -337,24 +377,30 @@ Following you can see test template samples.
 
 Here goes the log ``header``:
 
+```html
         <!-- test-log-header.html -->
         <title>Log template sample</title>
         <h1>Unit test results</h1>
         <table>
             <tr><td><b>Test name</b></td><td><b>Result</b></td><td><b>Message</b></td></tr>
+```
 
 
 now the ``detail``...
 
+```html
         <!-- test-log-detail.html -->
         <tr><td>$CASE_NAME in $FILE at $LINE</td><td>$STATUS</td><td>$ASSERTION_MESSAGE</td></tr>
+```
 
 and then the ``footer``.
 
+```html
             <!-- test-log-footer -->
             </table>
             <b>Total tests executed</b>: $RAN_TESTS_NR
         </html>
+```
 
 To use these templates you must indicate them by command line in this following way:
 
