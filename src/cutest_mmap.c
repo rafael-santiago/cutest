@@ -32,7 +32,7 @@ static int g_temp_cute_leak_check = 0;
 
 #ifndef HAS_NO_PTHREAD
 
-pthread_mutex_t mmap_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t mmap_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 #endif
 
@@ -41,6 +41,29 @@ pthread_mutex_t mmap_mutex = PTHREAD_MUTEX_INITIALIZER;
 HANDLE mmap_mutex;
 
 #endif
+
+void init_mmap_mutex() {
+#ifndef _WIN32
+
+#ifndef HAS_NO_PTHREAD
+
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(&mmap_mutex, &attr);
+
+#endif
+
+#else
+    mmap_mutex = CreateMutex(NULL, FALSE, NULL);
+#endif
+}
+
+void deinit_mmap_mutex() {
+#ifdef _WIN32
+    CloseHandle(mmap_mutex);
+#endif
+}
 
 static struct cute_mmap_ctx *get_cute_mmap_ctx_tail(struct cute_mmap_ctx *mmap) {
     struct cute_mmap_ctx *p;
@@ -68,7 +91,6 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
 #endif
 
 #else
-    mmap_mutex = CreateMutex(NULL, FALSE, NULL);
     WaitForSingleObject(mmap_mutex, INFINITE);
 #endif
     head = mmap;
@@ -118,7 +140,6 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
 #endif
 
 #else
-    mmap_mutex = CreateMutex(NULL, FALSE, NULL);
     WaitForSingleObject(mmap_mutex, INFINITE);
 #endif
     head = mmap;
@@ -177,7 +198,6 @@ void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
 #endif
 
 #else
-    mmap_mutex = CreateMutex(NULL, FALSE, NULL);
     WaitForSingleObject(mmap_mutex, INFINITE);
 #endif
     temp = g_cute_leak_check;

@@ -33,6 +33,10 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
 
 void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap);
 
+void init_mmap_mutex();
+
+void deinit_mmap_mutex();
+
 #ifdef __cplusplus
 }
 #endif

@@ -210,6 +210,7 @@ extern "C" {
                           signal(SIGINT, sigint_watchdog);\
                           signal(SIGTERM, sigint_watchdog);\
                           init_memory_func_ptr();\
+                          init_mmap_mutex();\
                           logpath = cute_get_option("cutest-log-path", argc, argv, NULL);\
                           if (cute_get_option("cutest-leak-check", argc, argv, NULL) != NULL) {\
                            g_cute_leak_check = 1;\
@@ -240,6 +241,7 @@ extern "C" {
                            exit_code = 1;\
                           }\
                           cute_close_log_fd();\
+                          deinit_mmap_mutex();\
                           return exit_code;\
                          }
 
@@ -273,6 +275,7 @@ extern "C" {
                           signal(SIGINT, sigint_watchdog);\
                           signal(SIGTERM, sigint_watchdog);\
                           init_memory_func_ptr();\
+                          init_mmap_mutex();\
                           logpath = cute_get_option("cutest-log-path", argc, argv, NULL);\
                           if (cute_get_option("cutest-leak-check", argc, argv, NULL) != NULL) {\
                            g_cute_leak_check = 1;\
@@ -303,6 +306,7 @@ extern "C" {
                            exit_code = 1;\
                           }\
                           cute_close_log_fd();\
+                          deinit_mmap_mutex();\
                           return exit_code;\
                          }
 
@@ -335,6 +339,7 @@ extern "C" {
                           signal(SIGINT, sigint_watchdog);\
                           signal(SIGTERM, sigint_watchdog);\
                           init_memory_func_ptr();\
+                          init_mmap_mutex();\
                           logpath = cute_get_option("cutest-log-path", argc, argv, NULL);\
                           if (cute_get_option("cutest-leak-check", argc, argv, NULL) != NULL) {\
                            g_cute_leak_check = 1;\
@@ -365,6 +370,7 @@ extern "C" {
                            exit_code = 1;\
                           }\
                           cute_close_log_fd();\
+                          deinit_mmap_mutex();\
                           return exit_code;\
                          }
 

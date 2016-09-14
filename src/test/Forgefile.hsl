@@ -30,14 +30,17 @@ cutest-test.prologue() {
 
     if (hefesto.sys.os_name() == "linux") {
         $ldflags.add_item("-ldl");
+        $ldflags.add_item("-lpthread");
     } else if (hefesto.sys.os_name() == "freebsd") {
         $ldflags.add_item("-lexecinfo");
+        $ldflags.add_item("-lpthread");
     } else if (hefesto.sys.os_name() == "minix") {
         $ldflags.add_item("-lexecinfo");
     } else if (hefesto.sys.os_name() == "sunos") {
         $cflags.add_item("-DNO_CUTEST_BACKTRACING");
     } else if (hefesto.sys.os_name() == "netbsd") {
         $ldflags.add_item("-lexecinfo");
+        $ldflags.add_item("-lpthread");
     } else if (hefesto.sys.os_name() == "openbsd") {
         $ldflags.add_item("-lexecinfo");
         $ldflags.add_item("-lpthread");

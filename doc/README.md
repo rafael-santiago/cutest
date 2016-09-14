@@ -286,12 +286,21 @@ Or still (if you put ``libcutest`` in a well-known place):
 
 ``gcc your-test.c -oyour-test -lcutest``
 
-Being on ``Linux`` is also necessary use the additional link-flag ``-ldl``.
+### Additional Linker flags
 
-On ``FreeBSD``, ``NetBSD`` and ``MINIX`` you need to use the additional link-flag ``-lexecinfo``.
+Being on ``Linux`` is also necessary to use the additional linker flag ``-ldl``.
+
+On ``FreeBSD``, ``NetBSD``, ``OpenBSD`` and ``MINIX`` you need to use the additional linker flag ``-lexecinfo``.
+
+If your ``libexecinfo`` is installed into a non well-known place, you need to specify its ``include`` and ``library`` directories.
+Using ``gcc``/``clang`` the options ``-I`` and ``-L`` can get the job done.
 
 If you are on ``Solaris`` you need to define the macro ``NO_CUTEST_BACKTRACING``. The related ``GCC`` compiler flag
-is ``-DNO_CUTEST_BACKTRACING``.
+is ``-DNO_CUTEST_BACKTRACING``. However, if your ``Solaris`` has ``libexecinfo`` let's give it a try but firstly you
+need to recompile the ``libcutest`` with support for ``backtracing``.
+
+Excepting ``MINIX`` (which currently does not offer support for ``PThreads``) on all supported UNIX-like is necessary to use
+the linker flag ``-lpthread``.
 
 ## Dumping test log to a file
 
