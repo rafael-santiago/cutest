@@ -62,6 +62,8 @@ void init_mmap_mutex() {
 void deinit_mmap_mutex() {
 #ifdef _WIN32
     CloseHandle(mmap_mutex);
+#else
+    pthread_mutex_destroy(&mmap_mutex);
 #endif
 }
 
