@@ -51,7 +51,7 @@ void init_mmap_mutex() {
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&mmap_mutex, &attr);
-
+    pthread_mutexattr_destroy(&attr);
 #endif
 
 #else
@@ -62,8 +62,6 @@ void init_mmap_mutex() {
 void deinit_mmap_mutex() {
 #ifdef _WIN32
     CloseHandle(mmap_mutex);
-#else
-    pthread_mutex_destroy(&mmap_mutex);
 #endif
 }
 
