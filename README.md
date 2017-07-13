@@ -26,7 +26,7 @@ Of course, that it should run in a bunch of ``UNIX`` boxes, however I prefer to 
 and working pretty fine. If there is a specific non-listed platform that you want to use ``cutest``, let me know, maybe I
 can adjust the library's build to accomplish your requirements ;)
 
-## How to build it?
+## How to build it
 
 To build ``cutest`` the [hefesto](https://github.com/rafael-santiago/hefesto.git) usage is necessary. Being
 ``Hefesto`` installed in your system all you need to emit on a ``shell`` inside the cutest's ``src`` subdirectory is:

@@ -2,7 +2,7 @@
 
 This document summarizes what is necessary to do in order to write unit tests for your project using ``libcutest``.
 
-## How to use it?
+## How to use it
 
 Firstly you need to include the main library header which stands for:
 
@@ -276,7 +276,7 @@ Or still:
         cute_log("Oh my God! Houston, we got Raptors in $CASE_NAME!\n");
 ```
 
-## How to link my test with cutest?
+## How can I link my test with cutest?
 
 In order to ``link`` your test binary you can proceed as follows:
 
