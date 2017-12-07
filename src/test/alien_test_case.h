@@ -5,8 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef _ALIEN_TEST_CASE_H
-#define _ALIEN_TEST_CASE_H 1
+#ifndef ALIEN_TEST_CASE_H
+#define ALIEN_TEST_CASE_H 1
 
 #include "../cutest.h"
 

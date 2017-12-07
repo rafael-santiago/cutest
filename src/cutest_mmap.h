@@ -5,8 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef _CUTEST_MMAP_H
-#define _CUTEST_MMAP_H 1
+#ifndef CUTEST_MMAP_H
+#define CUTEST_MMAP_H 1
 
 #include <stdlib.h>
 

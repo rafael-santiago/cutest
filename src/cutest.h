@@ -5,8 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef _CUTEST_H
-#define _CUTEST_H 1
+#ifndef CUTEST_H
+#define CUTEST_H 1
 
 #include <stdio.h>
 #include <signal.h>

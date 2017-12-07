@@ -5,8 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef _CUTEST_MEMORY_H
-#define _CUTEST_MEMORY_H 1
+#ifndef CUTEST_MEMORY_H
+#define CUTEST_MEMORY_H 1
 
 #include <stdlib.h>
 
