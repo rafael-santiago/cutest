@@ -21,13 +21,13 @@ Basically the ``main`` function from your test binary should include a call to t
         }
 ```
 
-But for convenience ``cutest`` brings a short way to define it:
+But for convenience ``cutest`` brings a short way of defining it:
 
 ```c
         CUTE_MAIN(entry)
 ```
 
-The entry point is merely an unit test case which must be declared using special definition macros:
+The entry point is merely a unit test case which must be declared using special definition macros:
 
 ```c
         CUTE_TEST_CASE(entry)
@@ -36,13 +36,13 @@ The entry point is merely an unit test case which must be declared using special
 ```
 
 The entry point is the place where you really should call your test-cases. The following
-macro is destinated to call a ``test-case``:
+macro is destinated to call a ``test case``:
 
 ```c
         CUTE_RUN_TEST(my_previous_well_defined_test_case);
 ```
 
-The ``test-cases`` should use the same definition schema that is used with the ``entry-point``. Look an
+The ``test cases`` should use the same definition schema that is used with the ``entry-point``. Look an
 example:
 
 ```c
@@ -54,7 +54,7 @@ example:
 The example above will break if for some reason one be equals to zero. In this case the error message
 passed as first argument will be shown. The second argument is the logical test assertion.
 
-If your ``test-case`` needs fixtures you must declare the fixtures using the following schemas:
+If your ``test case`` needs fixtures you must declare the fixtures using the following schemas:
 
 ```c
         CUTE_FIXTURE_SETUP(my_test_case)
@@ -215,8 +215,8 @@ In this case you should use the ``CUTE_ASSERT`` macro group instead of ``CUTE_CH
 |``CUTE_ASSERT_LEQ``| ``less-than-or-equals``    | ``CUTE_ASSERT_LEQ(<a>, <b>)``               | ``CUTE_ASSERT_LEQ(x, 0)``  |
 |``CUTE_ASSERT_GEQ``| ``greater-than-or-equals`` | ``CUTE_ASSERT_GEQ(<a>, <b>)``               | ``CUTE_ASSERT_GEQ(x, -1)`` |
 
-However, I think that the lack of good custom assertion error messages can sometimes obfuscate the test report and as result
-it also can consume more time on understanding and on the correct fix applying. In my opinion you should use it with moderation.
+However, I think that the lack of good custom assertion error messages can sometimes obfuscate the test report and as a result
+it also can consume more time on understanding and applying the correct fix. In my opinion you should use it with care.
 
 ## Grouping tests inside suites
 
@@ -299,7 +299,7 @@ If you are on ``Solaris`` you need to define the macro ``NO_CUTEST_BACKTRACING``
 is ``-DNO_CUTEST_BACKTRACING``. However, if your ``Solaris`` has ``libexecinfo`` let's give it a try but firstly you
 need to recompile the ``libcutest`` with support for ``backtracing``.
 
-Excepting ``MINIX`` (which currently does not offer support for ``PThreads``) on all supported UNIX-like is necessary to use
+Excepting ``MINIX`` (which currently does not offer support for ``Pthreads``) on all supported UNIX-like is necessary to use
 the linker flag ``-lpthread``.
 
 ## Dumping test log to a file
@@ -308,7 +308,7 @@ To do it use the option ``--cutest-log-path=<filepath>``. This option specifies 
 
 ## Reading command line options from your test cases
 
-Sometimes is necessary... So to do it you should use the macro ``CUTE_GET_OPTION(<option-name>)``. Supposing that you want to read the option ``--foobar`` try this:
+Sometimes is necessary... To do it you should use the macro ``CUTE_GET_OPTION(<option-name>)``. Supposing that you want to read the option ``--foobar`` try this:
 
 ```c
         char *foobar_value = CUTE_GET_OPTION("foobar");
@@ -322,9 +322,9 @@ When you try to read an unknown option the return is always ``NULL`` and ``flag 
 
 ## Detecting memory leaks
 
-Firstly be aware that the [``valgrind``](http://valgrind.org) usage is the best way to catch this kind of [raptors](https://xkcd.com/292/) inside your code. However ``cutest`` brings a minimal system that performs memory leak detection. It could be a profitable way to detect this kind of issue as soon as possible. Because you will be looking for memory leaks being still on test phase.
+Firstly be aware that [``valgrind``](http://valgrind.org) is the best way to catch this kind of [raptors](https://xkcd.com/292/) inside your code. However ``cutest`` brings a minimal system that performs memory leak detection. It could be a profitable way to detect this kind of issue as soon as possible. Because you will be looking for memory leaks being still on test phase.
 
-The usage of this system must be flagged passing the option ``--cutest-leak-check`` to your unit test binary. Something like:
+The usage of this system must be enabled with the option ``--cutest-leak-check`` to your unit test binary. Something like:
 
 ``something/leaking/over/the/rainbow/your-test --cutest-leak-check``
 
@@ -348,13 +348,13 @@ The report includes:
 - The line number where was done the last test assertion before leak.
 - A content listing from this memory address and how many bytes are leaking.
 
-In the end is also included a sum of all detected leaks.
+At the end is also included a sum of all detected leaks.
 
-The allocation id can be used in order to force a debug break. When you pass to your test binary the option ``--cutest-leak-id=<allocation-id>`` a ``trap`` signal will be raised at the moment that the allocation id be equals to passed value. Being the debugger attached you will be able to inspect the ``callstack`` and then know more about this "superunknown" leak.
+The allocation id can be used in order to force a debug break. When you pass to your test binary the option ``--cutest-leak-id=<allocation-id>`` a ``trap`` signal will be raised at the moment that the allocation id be equals to the passed value. Being the debugger attached you will be able to inspect the ``callstack`` and then know more about this leak.
 
 ## Log customizing
 
-It is possible to custom the test logs. ``Cutest`` divide the log in three parts which are: ``header``, ``detail`` and ``footer``.
+It is possible to customize the test logs. ``Cutest`` divide the log in three parts which are: ``header``, ``detail`` and ``footer``.
 
 There are three options that you need to pass to your test binary if you intend to modify the log layout. Table 2 summarizes
 these options.
@@ -367,7 +367,7 @@ these options.
 | ``--cutest-log-detail`` | a file path pointing to the detail template |
 | ``--cutest-log-footer`` | a file path pointing to the footer template |
 
-Into the template goes the specific tokens related with the chosen format well as the variables that belongs relevant infos about the logged process.
+Into the template goes the specific tokens related with the chosen format well as the variables that carry relevant infos about the logged process.
 
 Table 3 brings a listing of these variables and what they represent.
 
@@ -416,7 +416,7 @@ To use these templates you must indicate them by command line in this following 
 ``somewhere/over/the/rainbow/your-test --cutest-log-header=templates/test-log-header.html --cutest-log-detail=templates/test-log-detail.html --cutest-log-footer=templates/test-log-footer.html``
 
 **Remark**: Under ``unix-like`` platforms we call ``setbuf()`` in order to set ``stdout`` and ``stderr`` to ``NULL`` when we
-are logging the test's output to a file. It is done for getting rid of the initial 4k allocation done by the ``stdio`` and
+are logging the test's output to a file. It is done to get rid of the initial 4k allocation done by the ``stdio`` and
 never freed (for performance issues). When not skipped it can add some noise to your memory leak's reports.
 
 ### Customizing the memory leak report
@@ -435,6 +435,41 @@ It is possible too. The Table 4 brings all variables recognized by this kind of 
 |         ``$LEAK_SIZE``            | the size of leak                                                |
 |         ``$LEAK_SUM``             | the total (in bytes) that are leaking                           |
 
-Similar the test log custom you need to pass the options specifying the file path of ``header``, ``detail`` and ``footer``.
+Similar to the test log custom you need to pass the options specifying the file path of ``header``, ``detail`` and ``footer``.
 These options are respectively: ``--cutest-leak-log-header``, ``--cutest-leak-log-detail`` and ``--cutest-leak-log-footer``.
 
+## Testing kernel mode stuff with cutest
+
+First off you should bear in mind that in kernel mode the cutest's features are reduced. The only available features are
+the test assertion macros and the abstraction macros in order to produce your loadable kernel module (a.k.a your test binary).
+
+Until now the supported platforms are ``Linux`` and ``FreeBSD``.
+
+There is no compiler flags to pass. All you should do is to include the reader file ``kutest.h``.
+Now about the macros, the general rule is: any ``CUTE`` from user mode becomes ``KUTE`` in kernel mode.
+Take a look:
+
+```c
+#include <kutest.h>
+
+KUTE_DECLARE_TEST_CASE(tests_entry);
+
+KUTE_DECLARE_TEST_CASE(one_plus_two_test);
+
+KUTE_TEST_CASE(tests_entry)
+    // Call all tests from here.
+    KUTE_RUN_TEST(one_plus_two_test);
+KUTE_TEST_CASE_END
+
+KUTE_TEST_CASE(one_plus_two_test)
+    KUTE_ASSERT(2 + 1 == 3);
+KUTE_TEST_CASE_END
+
+KUTE_MAIN(tests_entry);
+```
+
+This is about a LKM so you should compile it as your operating system expects. To run the tests insert the kernel module. If
+there is no error during this operation your tests has passed. Once inserted is up to you remove it.
+
+Yes, of course if you have made some stupid thing during the tests the machine can reset, enter in a panic state, etc. This
+is also up to you.
