@@ -86,7 +86,7 @@ static int modld(struct module *module, int cmd, void *arg) {\
     int exit_code = 0;\
     switch (cmd) {\
         case MOD_LOAD:\
-            uprintf("*** kryptos test module loaded...\n");\
+            uprintf("*** " #test " loaded...\n");\
             if ((exit_code = test()) == 0) {\
                 uprintf("*** all tests passed. [%d test(s) ran]\n", g_kutest_ran_tests);\
             } else {\
@@ -94,7 +94,7 @@ static int modld(struct module *module, int cmd, void *arg) {\
             }\
             break;\
         case MOD_UNLOAD:\
-            uprintf("*** kryptos test module unloaded\n");\
+            uprintf("*** " #test " unloaded.\n");\
             break;\
         default:\
             exit_code = EOPNOTSUPP;\
@@ -115,7 +115,7 @@ DECLARE_MODULE(test, test ## _mod, SI_SUB_DRIVERS, SI_ORDER_MIDDLE);
 MODULE_LICENSE("GPL");\
 static int mod_init(void) {\
     int exit_code = 1;\
-    printk(KERN_ERR "*** kryptos test module loaded...\n");\
+    printk(KERN_ERR "*** " #test " loaded...\n");\
     if ((exit_code = test()) == 0) {\
         printk(KERN_ERR "*** all tests passed. [%d test(s) ran]\n", g_kutest_ran_tests);\
     } else {\
@@ -124,7 +124,7 @@ static int mod_init(void) {\
     return exit_code;\
 }\
 static void mod_fini(void) {\
-    printk(KERN_ERR "*** kryptos test module unloaded\n");\
+    printk(KERN_ERR "*** " #test " unloaded.\n");\
 }\
 module_init(mod_init);\
 module_exit(mod_fini);
