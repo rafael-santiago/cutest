@@ -38,6 +38,9 @@ static int g_kutest_ran_tests = 0;
 
 #elif defined(__linux__)
 
+#include <linux/init.h>
+#include <linux/module.h>
+
 static int g_kutest_ran_tests = 0;
 
 #define KUTE_ASSERT_CHECK(msg, chk) do {\
