@@ -45,7 +45,7 @@ static int g_kutest_ran_tests = 0;
 
 #define KUTE_ASSERT_CHECK(msg, chk) do {\
     if ((chk) == 0) {\
-        printk(KERN_ERR msg " is false.");\
+        printk(KERN_ERR msg "hmm bad, bad bug in %s at line %d: %s is false.\n", __FILE__, __LINE__, msg);\
         return -EAGAIN;\
     }\
 } while (0)
