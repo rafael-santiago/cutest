@@ -41,7 +41,15 @@ static int g_kutest_ran_tests = 0;
 #include <linux/init.h>
 #include <linux/module.h>
 
+#if !defined(__GNUC__)
+
 static int g_kutest_ran_tests = 0;
+
+#else
+
+__attribute__((__unused__)) static int g_kutest_ran_tests = 0;
+
+#endif
 
 #define KUTE_ASSERT_CHECK(msg, chk) do {\
     if ((chk) == 0) {\
