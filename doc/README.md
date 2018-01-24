@@ -443,7 +443,7 @@ These options are respectively: ``--cutest-leak-log-header``, ``--cutest-leak-lo
 First off you should bear in mind that in kernel mode the cutest's features are reduced. The only available features are
 the test assertion macros and the abstraction macros in order to produce your loadable kernel module (a.k.a your test binary).
 
-Until now the supported platforms are ``Linux`` and ``FreeBSD``.
+Until now the supported platforms are ``Linux``, ``FreeBSD`` and also ``NetBSD``.
 
 There is no compiler flags to pass. All you should do is to include the reader file ``kutest.h``.
 Now about the macros, the general rule is: any ``CUTE`` from user mode becomes ``KUTE`` in kernel mode.

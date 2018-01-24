@@ -5,7 +5,7 @@ Cutest is an acronym that can be undestood as ``C`` ``u``nit ``test``.
 This library brings a bunch of macros in order to guide the implementation of unit tests for ``C`` projects.
 
 ``Cutest`` brings a minimal memory leak detection system (fully working in ``Linux``, ``Windows``, ``FreeBSD``, ``Solaris``, ``NetBSD``, ``MINIX`` and ``OpenBSD``).
-You can also use cutest to test kernel mode stuff in ``Linux`` and ``FreeBSD``.
+You can also use cutest to test kernel mode stuff in ``Linux``, ``FreeBSD`` and ``NetBSD``.
 
 All supported platforms by this library and other general features are listed on **Table 1**.
 

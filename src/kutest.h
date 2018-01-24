@@ -36,6 +36,28 @@ static int g_kutest_ran_tests = 0;
     uprintf("-- passed.\n");\
 } while (0)
 
+#elif defined(__NetBSD__)
+
+#include <sys/module.h>
+
+static int g_kutest_ran_tests = 0;
+
+#define KUTE_ASSERT_CHECK(msg, chk) do {\
+    if ((chk) == 0) {\
+        uprintf("hmm bad, bad bug in %s at line %d: %s is false.\n", __FILE__, __LINE__, msg);\
+        return 1;\
+    }\
+} while (0)
+
+#define KUTE_RUN_TEST(test) do {\
+    uprintf("-- running %s...\n", #test);\
+    g_kutest_ran_tests++;\
+    if (test() != 0) {\
+        return 1;\
+    }\
+    uprintf("-- passed.\n");\
+} while (0)
+
 #elif defined(__linux__)
 
 #include <linux/init.h>
@@ -119,6 +141,31 @@ static moduledata_t test ## _mod = {\
     NULL\
 };\
 DECLARE_MODULE(test, test ## _mod, SI_SUB_DRIVERS, SI_ORDER_MIDDLE);
+
+#elif defined(__NetBSD__)
+
+#define KUTE_MAIN(test)\
+MODULE(MODULE_CLASS_DRIVER, test, NULL);\
+static int test ##_modcmd(modcmd_t cmd, void *args) {\
+    int exit_code = 0;\
+    switch (cmd) {\
+        case MODULE_CMD_INIT:\
+            uprintf("***" #test " loaded...\n");\
+            if ((exit_code = test()) == 0) {\
+                uprintf("*** all tests passed. [%d test(s) ran]\n", g_kutest_ran_tests);\
+            } else {\
+                uprintf("fail: [%d test(s) ran]\n", g_kutest_ran_tests);\
+            }\
+            break;\
+        case MOD_UNLOAD:\
+            uprintf("*** " #test " unloaded.\n");\
+            break;\
+        default:\
+            exit_code = EOPNOTSUPP;\
+            break;\
+    }\
+    return exit_code;\
+}
 
 #elif defined(__linux__)
 
