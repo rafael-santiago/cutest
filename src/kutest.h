@@ -157,7 +157,7 @@ static int test ##_modcmd(modcmd_t cmd, void *args) {\
                 uprintf("fail: [%d test(s) ran]\n", g_kutest_ran_tests);\
             }\
             break;\
-        case MOD_CMD_FINI:\
+        case MODULE_CMD_FINI:\
             uprintf("*** " #test " unloaded.\n");\
             break;\
         default:\
