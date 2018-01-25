@@ -118,7 +118,7 @@ __attribute__((__unused__)) static int g_kutest_ran_tests = 0;
 static int modld(struct module *module, int cmd, void *arg) {\
     int exit_code = 0;\
     switch (cmd) {\
-        case MOD_LOAD:\
+        case MOD_CMD_INIT:\
             uprintf("*** " #test " loaded...\n");\
             if ((exit_code = test()) == 0) {\
                 uprintf("*** all tests passed. [%d test(s) ran]\n", g_kutest_ran_tests);\
@@ -126,7 +126,7 @@ static int modld(struct module *module, int cmd, void *arg) {\
                 uprintf("fail: [%d test(s) ran]\n", g_kutest_ran_tests);\
             }\
             break;\
-        case MOD_UNLOAD:\
+        case MOD_CMD_FINI:\
             uprintf("*** " #test " unloaded.\n");\
             break;\
         default:\
