@@ -8,6 +8,8 @@
 #ifndef CUTEST_MMAP_H
 #define CUTEST_MMAP_H 1
 
+#if !(defined(_KERNEL) && defined(_LKM) && defined(__NetBSD__))
+
 #include <stdlib.h>
 
 #ifdef __cplusplus
@@ -39,6 +41,8 @@ void deinit_mmap_mutex();
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif

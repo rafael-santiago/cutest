@@ -5,6 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
+#if !(defined(_KERNEL) && defined(_LKM) && defined(__NetBSD__))
+
 #include "cutest.h"
 #include <stdarg.h>
 #include <stdio.h>
@@ -461,3 +463,5 @@ int cute_should_run_test(const char *test) {
     }
     return cute_find_option_in_option_list(test, cutest_run_test);
 }
+
+#endif

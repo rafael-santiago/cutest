@@ -5,6 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
+#if !(defined(_KERNEL) && defined(_LKM) && defined(__NetBSD__))
+
 #include "cutest_memory.h"
 #include "cutest.h"
 #include "cutest_mmap.h"
@@ -166,3 +168,5 @@ void *realloc(void *ptr, size_t size) {
     }
     return retval;
 }
+
+#endif

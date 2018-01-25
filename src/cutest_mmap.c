@@ -5,6 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
+#if !(defined(_KERNEL) && defined(_LKM) && defined(__NetBSD__))
+
 #include "cutest_mmap.h"
 #include "cutest.h"
 #include <string.h>
@@ -219,3 +221,5 @@ void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap) {
     ReleaseMutex(mmap_mutex);
 #endif
 }
+
+#endif

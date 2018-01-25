@@ -8,6 +8,8 @@
 #ifndef CUTEST_H
 #define CUTEST_H 1
 
+#if !(defined(_KERNEL) && defined(_LKM) && defined(__NetBSD__))
+
 #include <stdio.h>
 #include <signal.h>
 #ifndef _WIN32
@@ -436,6 +438,8 @@ int cute_should_run_test(const char *test);
 
 #if __cplusplus
 }
+#endif
+
 #endif
 
 #endif

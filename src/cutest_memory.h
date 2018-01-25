@@ -8,6 +8,8 @@
 #ifndef CUTEST_MEMORY_H
 #define CUTEST_MEMORY_H 1
 
+#if !(defined(_KERNEL) && defined(_LKM) && defined(__NetBSD__))
+
 #include <stdlib.h>
 
 #ifdef __cplusplus
@@ -38,6 +40,8 @@ void init_memory_func_ptr();
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif
