@@ -91,7 +91,7 @@ __attribute__((__unused__)) static int g_kutest_ran_tests = 0;
 
 #endif
 
-#define KUTE_CHECK_EQ(msg, a, b) KUTE_ASSERT_ASSERT_CHECK(msg, (a) == (b))
+#define KUTE_CHECK_EQ(msg, a, b) KUTE_ASSERT_CHECK(msg, (a) == (b))
 
 #define KUTE_CHECK_NEQ(msg, a, b) KUTE_ASSERT_CHECK(msg, (a) != (b))
 
