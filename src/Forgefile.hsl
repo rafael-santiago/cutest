@@ -24,6 +24,15 @@ cutest.preloading() {
 }
 
 cutest.prologue() {
+    var option type list;
+
+    $option = hefesto.sys.get_option("build-skip");
+
+    if ($option.index_of("cutest") > -1) {
+        hefesto.sys.echo("BUILD INFO: cutest build was skipped.\n");
+        hefesto.project.abort(0);
+    }
+
     hefesto.sys.echo("*** NOW BUILDING libcutest.a... wait...\n\n");
     $sources.ls(".*\\.c$");
 

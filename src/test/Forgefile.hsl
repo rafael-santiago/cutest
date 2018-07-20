@@ -24,6 +24,15 @@ cutest-test.preloading() {
 project cutest-test : toolset $toolset_name : $sources, $includes, $cflags, $libraries, $ldflags, "cutest";
 
 cutest-test.prologue() {
+    var option type list;
+
+    $option = hefesto.sys.get_option("build-skip");
+
+    if ($option.index_of("cutest") > -1) {
+        hefesto.sys.echo("BUILD INFO: cutest build was skipped.\n");
+        hefesto.project.abort(0);
+    }
+
     hefesto.sys.echo("*** NOW RUNNING cutest's UNIT TESTS... wait...\n\n");
 
     $ldflags.add_item("../lib/libcutest.a");
