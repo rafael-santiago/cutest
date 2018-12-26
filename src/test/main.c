@@ -91,6 +91,8 @@ CUTE_TEST_CASE(cute_mmap_ctx_general_tests)
         { sizeof(integer), &integer },
         { sizeof(real), &real }
     };
+    mmap = add_allocation_to_cute_mmap_ctx(mmap, 0, NULL);
+    CUTE_CHECK("mmap != NULL", mmap == NULL);
     mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(byte), &byte);
     mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(integer), &integer);
     mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(real), &real);
