@@ -41,7 +41,7 @@ int g_cute_last_exec_line = -1;
 
 char *g_cute_last_ref_file = NULL;
 
-struct cute_mmap_ctx *g_cute_mmap = NULL;
+struct cute_mmap_ctx *g_cute_mmap = NULL, *g_cute_mmap_tail = NULL;
 
 struct cute_mmap_ctx *g_mp = NULL;
 

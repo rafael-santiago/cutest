@@ -24,14 +24,14 @@ struct cute_mmap_ctx {
     void *addr;
     char file_path[8192];
     int line_nr;
-    struct cute_mmap_ctx *next;
+    struct cute_mmap_ctx *next, *tail;
 };
 
 struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap,
-                                                      size_t size, void *addr);
+                                                      size_t size, void *addr, struct cute_mmap_ctx **tail);
 
 struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mmap,
-                                                       void *addr);
+                                                       void *addr, struct cute_mmap_ctx **tail);
 
 void del_cute_mmap_ctx(struct cute_mmap_ctx *mmap);
 

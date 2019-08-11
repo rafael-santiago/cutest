@@ -102,7 +102,7 @@ void *calloc(size_t nmemb, size_t size) {
     }
     retval = tru_calloc(nmemb, size);
     if (g_cute_leak_check) {
-        g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
+        g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval, &g_cute_mmap_tail);
     }
     return retval;
 }
@@ -122,7 +122,7 @@ void *malloc(size_t size) {
     }
     retval = tru_malloc(size);
     if (g_cute_leak_check) {
-        g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
+        g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval, &g_cute_mmap_tail);
     }
     return retval;
 }
@@ -143,7 +143,7 @@ void free(void *ptr) {
         return;
     }
     if (g_cute_leak_check) {
-        g_cute_mmap = rm_allocation_from_cute_mmap_ctx(g_cute_mmap, ptr);
+        g_cute_mmap = rm_allocation_from_cute_mmap_ctx(g_cute_mmap, ptr, &g_cute_mmap_tail);
     }
     tru_free(ptr);
 }
@@ -163,8 +163,8 @@ void *realloc(void *ptr, size_t size) {
     }
     retval = tru_realloc(ptr, size);
     if (g_cute_leak_check) {
-        g_cute_mmap = rm_allocation_from_cute_mmap_ctx(g_cute_mmap, ptr);
-        g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval);
+        g_cute_mmap = rm_allocation_from_cute_mmap_ctx(g_cute_mmap, ptr, &g_cute_mmap_tail);
+        g_cute_mmap = add_allocation_to_cute_mmap_ctx(g_cute_mmap, size, retval, &g_cute_mmap_tail);
     }
     return retval;
 }

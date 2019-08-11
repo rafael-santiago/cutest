@@ -25,7 +25,7 @@ static int g_temp_cute_leak_check = 0;
 #define new_cute_mmap_ctx(m) ( g_temp_cute_leak_check = g_cute_leak_check,\
                                g_cute_leak_check = 0,\
                                (m) = tru_malloc(sizeof(struct cute_mmap_ctx)),\
-                               (m)->next = NULL,\
+                               (m)->next = (m)->tail = NULL,\
                                (m)->line_nr = g_cute_last_exec_line,\
                                strncpy((m)->file_path, g_cute_last_ref_file, sizeof((m)->file_path)-1),\
                                g_cute_leak_check = g_temp_cute_leak_check )
@@ -78,9 +78,10 @@ static struct cute_mmap_ctx *get_cute_mmap_ctx_tail(struct cute_mmap_ctx *mmap) 
 }
 
 struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap,
-                                                      size_t size, void *addr) {
+                                                      size_t size, void *addr, struct cute_mmap_ctx **tail) {
     struct cute_mmap_ctx *head = NULL;
     struct cute_mmap_ctx *p = NULL;
+
     if (g_cute_last_ref_file == NULL || addr == NULL) {
         return mmap;
     }
@@ -99,10 +100,20 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
     if (head == NULL) {
         new_cute_mmap_ctx(head);
         p = head;
+        if (tail != NULL) {
+            (*tail) = head;
+        }
     } else {
-        p = get_cute_mmap_ctx_tail(mmap);
+        if (tail == NULL) {
+            p = get_cute_mmap_ctx_tail(mmap);
+        } else {
+            p = (*tail);
+        }
         new_cute_mmap_ctx(p->next);
         p = p->next;
+        if (tail != NULL) {
+            (*tail) = p;
+        }
     }
     p->id = ++g_cute_mmap_id;
     p->size = size;
@@ -129,7 +140,7 @@ struct cute_mmap_ctx *add_allocation_to_cute_mmap_ctx(struct cute_mmap_ctx *mmap
 }
 
 struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mmap,
-                                                       void *addr) {
+                                                       void *addr, struct cute_mmap_ctx **tail) {
     struct cute_mmap_ctx *head = NULL;
     struct cute_mmap_ctx *burn = NULL;
     struct cute_mmap_ctx *last = NULL;
@@ -169,6 +180,9 @@ struct cute_mmap_ctx *rm_allocation_from_cute_mmap_ctx(struct cute_mmap_ctx *mma
             head = burn->next;
             burn->next = NULL;
         } else {
+            if (tail != NULL && burn->next == NULL) {
+                (*tail) = last;
+            }
             last->next = burn->next;
             burn->next = NULL;
         }

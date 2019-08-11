@@ -75,7 +75,7 @@ CUTE_TEST_CASE(CUTE_GET_OPTION_MACRO_test)
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(cute_mmap_ctx_general_tests)
-    struct cute_mmap_ctx *mmap = NULL;
+    struct cute_mmap_ctx *mmap = NULL, *tail = NULL;
     struct cute_mmap_ctx *mp = NULL;
     char byte = 0;
     int integer = 0;
@@ -91,11 +91,11 @@ CUTE_TEST_CASE(cute_mmap_ctx_general_tests)
         { sizeof(integer), &integer },
         { sizeof(real), &real }
     };
-    mmap = add_allocation_to_cute_mmap_ctx(mmap, 0, NULL);
+    mmap = add_allocation_to_cute_mmap_ctx(mmap, 0, NULL, &tail);
     CUTE_CHECK("mmap != NULL", mmap == NULL);
-    mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(byte), &byte);
-    mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(integer), &integer);
-    mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(real), &real);
+    mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(byte), &byte, &tail);
+    mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(integer), &integer, &tail);
+    mmap = add_allocation_to_cute_mmap_ctx(mmap, sizeof(real), &real, &tail);
     CUTE_CHECK("mmap == NULL", mmap != NULL);
     mmap_nr = 0;
     for (mp = mmap; mp != NULL; mp = mp->next, mmap_nr++);
@@ -105,22 +105,22 @@ CUTE_TEST_CASE(cute_mmap_ctx_general_tests)
         CUTE_CHECK_EQ("ems[m].size != mp->size", ems[m].size, mp->size);
         CUTE_CHECK_EQ("ems[m].ptr != mp->addr", ems[m].ptr, mp->addr);
     }
-    mmap = rm_allocation_from_cute_mmap_ctx(mmap, &byte);
+    mmap = rm_allocation_from_cute_mmap_ctx(mmap, &byte, &tail);
     mmap_nr = 0;
     for (mp = mmap; mp != NULL; mp = mp->next, mmap_nr++);
     CUTE_CHECK("mmap_nr != 2", mmap_nr == 2);
 
-    mmap = rm_allocation_from_cute_mmap_ctx(mmap, &real);
+    mmap = rm_allocation_from_cute_mmap_ctx(mmap, &real, &tail);
     mmap_nr = 0;
     for (mp = mmap; mp != NULL; mp = mp->next, mmap_nr++);
     CUTE_CHECK("mmap_nr != 1", mmap_nr == 1);
 
-    mmap = rm_allocation_from_cute_mmap_ctx(mmap, NULL);
+    mmap = rm_allocation_from_cute_mmap_ctx(mmap, NULL, &tail);
     mmap_nr = 0;
     for (mp = mmap; mp != NULL; mp = mp->next, mmap_nr++);
     CUTE_CHECK("mmap_nr != 1", mmap_nr == 1);
 
-    mmap = rm_allocation_from_cute_mmap_ctx(mmap, &integer);
+    mmap = rm_allocation_from_cute_mmap_ctx(mmap, &integer, &tail);
     mmap_nr = 0;
     for (mp = mmap; mp != NULL; mp = mp->next, mmap_nr++);
     CUTE_CHECK("mmap_nr != 1", mmap_nr == 0);

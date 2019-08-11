@@ -402,7 +402,7 @@ extern int g_cute_last_exec_line;
 
 extern char *g_cute_last_ref_file;
 
-extern struct cute_mmap_ctx *g_cute_mmap;
+extern struct cute_mmap_ctx *g_cute_mmap, *g_cute_mmap_tail;
 
 extern char *g_cute_test_status;
 
