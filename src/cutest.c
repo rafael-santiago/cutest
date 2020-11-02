@@ -324,7 +324,9 @@ void cute_log(const char *msg, ...) {
                 }
             }
         } else {
-            fprintf(g_cute_log_fd, "%c", *mp);
+            if (g_cute_log_fd != NULL) {
+                fprintf(g_cute_log_fd, "%c", *mp);
+            }
         }
         mp++;
     }

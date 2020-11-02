@@ -93,9 +93,9 @@ void *calloc(size_t nmemb, size_t size) {
 #if defined(_WIN32) || defined(__FreeBSD__)
         init_memory_func_ptr();
 #endif
-        if (g_memhook_init_done) {
-            cute_log("libcutest INTERNAL ERROR: null tru_calloc().\n");
-        }
+        //if (g_memhook_init_done) {
+        //    cute_log("libcutest INTERNAL ERROR: null tru_calloc().\n");
+        //}
         if (tru_calloc == NULL) {
             return NULL;
         }
@@ -113,9 +113,9 @@ void *malloc(size_t size) {
 #if defined(_WIN32) || defined(__FreeBSD__)
         init_memory_func_ptr();
 #endif
-        if (g_memhook_init_done) {
-            cute_log("libcutest INTERNAL ERROR: null tru_malloc().\n");
-        }
+        //if (g_memhook_init_done) {
+        //    cute_log("libcutest INTERNAL ERROR: null tru_malloc().\n");
+        //}
         if (tru_malloc == NULL) {
             return NULL;
         }
@@ -132,9 +132,9 @@ void free(void *ptr) {
 #if defined(_WIN32) || defined(__FreeBSD__)
         init_memory_func_ptr();
 #endif
-        if (g_memhook_init_done) {
-            cute_log("libcutest INTERNAL ERROR: null tru_free().\n");
-        }
+        //if (g_memhook_init_done) {
+        //    cute_log("libcutest INTERNAL ERROR: null tru_free().\n");
+        //}
         if (tru_free == NULL) {
             return;
         }
@@ -154,9 +154,9 @@ void *realloc(void *ptr, size_t size) {
 #if defined(_WIN32) || defined(__FreeBSD__)
         init_memory_func_ptr();
 #endif
-        if (g_memhook_init_done) {
-            cute_log("libcutest INTERNAL ERROR: null tru_realloc().\n");
-        }
+        //if (g_memhook_init_done) {
+        //    cute_log("libcutest INTERNAL ERROR: null tru_realloc().\n");
+        //}
         if (tru_realloc == NULL) {
             return NULL;
         }
