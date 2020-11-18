@@ -94,6 +94,7 @@ __attribute__((__unused__)) static int g_kutest_ran_tests = 0;
 #include <nttdk.h>
 
 static int g_kutest_ran_tests = 0;
+UNREFERENCED_PARAMETER(g_kutest_ran_tests);
 
 #define KUTE_ASSERT_CHECK(msg, chk) do {\
 	if ((chk) == 0) {\
