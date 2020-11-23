@@ -443,7 +443,7 @@ These options are respectively: ``--cutest-leak-log-header``, ``--cutest-leak-lo
 First off you should bear in mind that in kernel mode the cutest's features are reduced. The only available features are
 the test assertion macros and the abstraction macros in order to produce your loadable kernel module (a.k.a your test binary).
 
-Until now the supported platforms are ``Linux``, ``FreeBSD`` and also ``NetBSD``.
+Until now the supported platforms are ``Linux``, ``FreeBSD``, ``NetBSD`` and also ``Windows``.
 
 There is no compiler flags to pass. All you should do is to include the reader file ``kutest.h``.
 Now about the macros, the general rule is: any ``CUTE`` from user mode becomes ``KUTE`` in kernel mode.
@@ -473,3 +473,43 @@ there is no error during this operation your tests has passed. Once inserted is 
 
 Yes, of course if you have made some stupid thing during the tests the machine can reset, enter in a panic state, etc. This
 is also up to you.
+
+On ``Windows`` "insert LKM" is a bit trickier task. You need to create a service based on your ``.sys`` that stands for your unit test binary:
+
+```
+_ sc create kunit101 binpath=c:\path\to\your\device-driver.sys type=kernel
+```
+
+After, You need start it:
+
+```
+_ sc start kunit101
+```
+
+Watch for the ``%ERRORLEVEL%`` (Zero stands for all OK). Yes, ``BSoD`` stands for really bad bugs.
+
+Unload your kernel mode unit tests:
+
+```
+_ sc stop kunit101
+```
+
+Finally, delete the service:
+
+```
+_ sc delete kunit101
+```
+
+Notice that, all those ``sc`` stuff must be done from an administrator command prompt. Otherwise it will not work properly. Your driver also should
+be signed or you can enable test signed driver loading on the machine where those unit test should run.
+
+In order to enable test signing, on an administrator command prompt execute:
+
+```
+_ bcdedit -set testsigning on
+```
+
+Of course, you can pack those four ``sc`` commands into a build task. In fact it would be more professional. Anyway, it is up to you, too.
+
+Another alterative for ``Windows`` is using the ``OSRLoader`` for driver loading issues or you can easily create your tiny custom loader on your own.
+Again, it is up to you.
