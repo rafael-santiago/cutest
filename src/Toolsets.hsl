@@ -7,3 +7,4 @@
 #
 include ~/toolsets/gcc/gcc-lib.hsl
 include ~/toolsets/clang/clang-lib.hsl
+include on windows ~/toolsets/msvc/msvc.hsl

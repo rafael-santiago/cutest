@@ -5,6 +5,7 @@
 # the terms of the GNU General Public License version 2.
 #
 #
+include on windows ~/toolsets/msvc/util/msvc_utils.hsl
 
 local function run_cmd_without_output(cmdline type string) : result type int {
     if (hefesto.sys.os_name() != "windows") {
@@ -47,4 +48,45 @@ function get_toolset_basename() : result type string {
     }
 
     result $chosen_toolset;
+}
+
+function composite_libcutest() : result type int {
+    var msvcrtlib type string;
+    var compile_model type list;
+    $compile_model = hefesto.sys.get_option("compile-model");
+    $msvcrtlib = "msvcrt.lib";
+    if ($compile_model.count() > 0) {
+        var compile_model_data type string;
+        $compile_model_data = $compile_model.item(0);
+        if ($compile_model_data == "debug") {
+            $msvcrtlib = "msvcrtd.lib";
+        }
+    }
+
+    if (msvc_configure_dev_env() != 0) {
+        hefesto.sys.echo("ERROR: Unable to configure development environment.\n");
+        result 1;
+    }
+
+    var vsdevcmd type string;
+    $vsdevcmd = hefesto.sys.env("HEFESTO_MSVC_TOOLSET_VSDEVCMD");
+
+    var arch type string;
+    $arch = msvc_get_platform();
+    if ($arch == "Win32") {
+        $arch = "x86";
+    }
+    $msvcrtlib = "\"%VCToolsInstallDir%\"\\" + $arch + "\\" + $msvcrtlib;
+    var composite_command type string;
+    $composite_command = $vsdevcmd + " && lib.exe /OUT:lib\\libcutest.lib lib\\libcuteststaged.lib " + $msvcrtlib;
+    var exit_code type int;
+    $exit_code = hefesto.sys.run($composite_command);
+    if ($exit_code == 0) {
+        var path type string;
+        $path = hefesto.sys.make_path(hefesto.sys.pwd(), "lib\\libcuteststaged.lib");
+        hefesto.sys.rm($path);
+        $path.replace("lib$", "pdb");
+        hefesto.sys.rm($path);
+    }
+    result $exit_code;
 }

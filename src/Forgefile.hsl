@@ -14,10 +14,11 @@ local var includes type list;
 local var cflags type list;
 local var libraries type list;
 local var ldflags type list;
+local var libname type string;
 
 local var toolset_name type string;
 
-project cutest : toolset $toolset_name : $sources, $includes, $cflags, $libraries, $ldflags, "libcutest.a" ;
+project cutest : toolset $toolset_name : $sources, $includes, $cflags, $libraries, $ldflags, $libname ;
 
 cutest.preloading() {
     $toolset_name = get_toolset_basename() + "lib";
@@ -33,7 +34,6 @@ cutest.prologue() {
         hefesto.project.abort(0);
     }
 
-    hefesto.sys.echo("*** NOW BUILDING libcutest.a... wait...\n\n");
     $sources.ls(".*\\.c$");
 
     $cflags = hefesto.sys.get_option("cflags");
@@ -44,9 +44,16 @@ cutest.prologue() {
         $cflags.add_item("-DNO_CUTEST_BACKTRACING");
     }
 
+    $libname = "libcutest.a";
+
     if ($toolset_name == "clang-c-lib") {
         $cflags.add_item("-Wno-format");
-    }
+    } else if ($toolset_name == "msvc-c-lib") {
+		$cflags.add_item("-D_CRT_SECURE_NO_WARNINGS");
+		$libname = "libcuteststaged.lib";
+	}
+
+    hefesto.sys.echo("*** NOW BUILDING " + $libname + "... wait...\n\n");
 
     if (hefesto.sys.os_name() != "windows") {
         if (isdir("/usr/local/include")) {
@@ -61,7 +68,14 @@ cutest.prologue() {
 
 cutest.epilogue() {
     if (hefesto.sys.last_forge_result() == 0) {
+        if ($toolset_name == "msvc-c-lib") {
+            if (composite_libcutest() != 0) {
+                hefesto.sys.echo("ERROR: Unable to composite libcutest.a\n");
+                hefesto.project.abort(1);
+            }
+        }
         hefesto.sys.echo("\n*** libcutest.a WAS BUILT.\n\n");
+
         var exit_code type int;
         $exit_code = 1;
         if (hefesto.sys.cd("test")) {
