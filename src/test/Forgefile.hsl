@@ -35,7 +35,13 @@ cutest-test.prologue() {
 
     hefesto.sys.echo("*** NOW RUNNING cutest's UNIT TESTS... wait...\n\n");
 
-    $ldflags.add_item("../lib/libcutest.a");
+    if ($toolset_name != "msvc-c-app") {
+        $ldflags.add_item("../lib/libcutest.a");
+    } else {
+        $ldflags.add_item("..\\lib\\libcutest" + get_msvc_artifact_postfix() + ".lib");
+        # INFO(Rafael): Rather important.
+        $ldflags.add_item("/NODEFAULTLIB:MSVCRT,MSVCRTD");
+    }
 
     # Let's explicitly configure the needed flags by platform.
 

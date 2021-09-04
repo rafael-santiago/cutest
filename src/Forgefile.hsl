@@ -69,6 +69,10 @@ cutest.prologue() {
 cutest.epilogue() {
     if (hefesto.sys.last_forge_result() == 0) {
         if ($toolset_name == "msvc-c-lib") {
+            # INFO(Rafael): On Windows (MSVC) since we have local definitions for malloc, realloc, alloc and free.
+            #               We need to link the test with /NODEFAULTLIB:MSVCRT,MSVCRTD, otherwise we will get a symbol redefinition error when linking.
+            #               But what about handling other possible libc dependencies? Instead of implementing a one from scratch let's composite libcutest
+            #               with the original MSVCRT[D].lib a dirty trick but works.
             if (composite_libcutest() != 0) {
                 hefesto.sys.echo("ERROR: Unable to composite libcutest.a\n");
                 hefesto.project.abort(1);
@@ -79,7 +83,20 @@ cutest.epilogue() {
         var exit_code type int;
         $exit_code = 1;
         if (hefesto.sys.cd("test")) {
-            $exit_code = hefesto.sys.forge("cutest-test", "Forgefile.hsl", "--obj-output-dir=obj --bin-output-dir=bin");
+            var compile_model type string;
+            $compile_model = "release";
+            var option type list;
+            $option = hefesto.sys.get_option("compile-model");
+            if ($option.count() > 0) {
+                $compile_model = $option.item(0);
+            }
+            var cpu_arch type string;
+            $option = hefesto.sys.get_option("cpu-arch");
+            if ($option.count() > 0) {
+                $cpu_arch = " --cpu-arch=" + $option.item(0);
+            }
+            $exit_code = hefesto.sys.forge("cutest-test", "Forgefile.hsl", "--obj-output-dir=obj --bin-output-dir=bin --toolset=" + $toolset_name +
+                                                                           " --compile-model=" + $compile_model + $cpu_arch);
             hefesto.sys.cd("..");
         }
         if ($exit_code != 0) {

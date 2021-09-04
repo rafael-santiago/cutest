@@ -60,17 +60,7 @@ function composite_libcutest() : result type int {
     }
 
     var cfg_postfix type string;
-    $cfg_postfix = "mt";
-
-    var option type list;
-    $option = hefesto.sys.get_option("link-model");
-    if ($option.count() > 0) {
-        var link_model type string;
-        $link_model = $option.item(0);
-        if ($link_model == "shared") {
-            $cfg_postfix = "md";
-        }
-    }
+    $cfg_postfix = get_msvc_artifact_postfix();
 
     var msvcrtlib type string;
     var compile_model type list;
@@ -82,7 +72,6 @@ function composite_libcutest() : result type int {
         $compile_model_data = $compile_model.item(0);
         if ($compile_model_data == "debug") {
             $msvcrtlib = "msvcrtd.lib";
-            $cfg_postfix = $cfg_postfix + "d";
         }
     }
 
@@ -179,4 +168,31 @@ local function get_vcvarsall_path() : result type string {
     }
 
     result "";
+}
+
+function get_msvc_artifact_postfix() : result type string {
+    var cfg_postfix type string;
+    $cfg_postfix = "mt";
+
+    var option type list;
+    $option = hefesto.sys.get_option("link-model");
+
+#    if ($option.count() > 0) {
+#        var link_model type string;
+#        $link_model = $option.item(0);
+#        if ($link_model == "shared") {
+#            $cfg_postfix = "md";
+#        }
+#    }
+
+    $option = hefesto.sys.get_option("compile-model");
+    if ($option.count() > 0) {
+        var compile_model type string;
+        $compile_model = $option.item(0);
+        if ($compile_model == "debug") {
+            $cfg_postfix = $cfg_postfix + "d";
+        }
+    }
+
+    result $cfg_postfix;
 }

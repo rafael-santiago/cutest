@@ -39,25 +39,6 @@ static int g_memhook_init_done = 0;
 void init_memory_func_ptr() {
 #ifdef _WIN32
     HMODULE handle = NULL;
-    char *msvcr_filenames[] = {
-        "MSVCRT.dll",
-        "MSVCR70.dll",
-        "MSVCR70d.dll",
-        "MSVCR71.dll",
-        "MSVCR71d.dll",
-        "MSVCR80.dll",
-        "MSCVR80d.dll",
-        "MSVCR90.dll",
-        "MSVCR90d.dll",
-        "MSVCR100.dll",
-        "MSVCR100d.dll",
-        "MSVCR110.dll",
-        "MSVCR110d.dll",
-        "MSVCR120.dll",
-        "MSCVR120d.dll"
-    };
-    size_t msvcr_filenames_count = sizeof(msvcr_filenames) / sizeof(msvcr_filenames[0]);
-    size_t m = 0;
 #endif
     if (tru_calloc != NULL && tru_malloc != NULL && tru_realloc != NULL && tru_free != NULL) {
         return;
@@ -70,11 +51,7 @@ void init_memory_func_ptr() {
     tru_realloc = (void *)dlsym(handle, "realloc");
     g_memhook_init_done = 1;
 #else
-    if (handle == NULL) {
-        for (m = 0; m < msvcr_filenames_count && handle == NULL; m++) {
-            handle = GetModuleHandle(msvcr_filenames[m]);
-        }
-    }
+    handle = LoadLibrary("ucrtbase.dll");
     if (handle != NULL) {
         tru_calloc = (void *)GetProcAddress(handle, "calloc");
         tru_malloc = (void *)GetProcAddress(handle, "malloc");

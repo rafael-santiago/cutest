@@ -54,17 +54,30 @@ you need to edit the file ``src/.ivk`` and add the following ``C Macro`` definit
 
 ### Note for Visual Studio users
 
-If you want to build ``cutest`` under ``MSVC`` you need to use ``Forgefile-msvc.hsl`` instead of the default ``Forgefile.hsl`` script.
-For this goal the build command changes a little. Being inside the cutest's ``src`` subdirectory:
+If you want to build ``cutest`` under ``MSVC`` you need to use invoke ``Hefesto`` as follows:
 
-``hefesto --forgefile=Forgefile-msvc.hsl --Forgefile-msvc-projects=cutest``
+```
+> hefesto --toolset=msvc-c-lib
+```
+
+The command above will build ``lib/libcutestmt.lib``.
+
+If you want to build ``lib/libcutestmtd.lib``, use:
+
+```
+> hefesto --toolset=msvc-c-lib --compile-model=debug
+```
+
+On ``64-bit`` environments 64-bit lib artifacts will be built, for ``32-bit``, use:
+
+```
+>hefesto --toolset=msvc-c-lib --cpu-arch=x86
+```
 
 After run the command above a file named ``libcutest.lib`` will be generated inside ``src/lib`` path.
 Note that use ``cutest`` on ``MSVC`` is a little bit tricky. It envolves composite the ``cutest`` with your current ``msvcrt.lib``
 (it explains why the ``cutest.lib`` is so huge).
 
-Another point is that this experimental build was written for ``Visual Studio 2012`` only.
+When linking your test artifact. You need to add the following link option: ``/NODEFAULTLIB:MSVCRT,MSVCRTD``.
 
-If you want to generate a debug version try:
-
-``hefesto --forgefile=Forgefile-msvc.hsl --Forgefile-msvc-projects=cutest --compile-model=debug``
+I have tested it over ``Microsoft Visual Studio 2019``.
