@@ -51,8 +51,30 @@ function get_toolset_basename() : result type string {
 }
 
 function composite_libcutest() : result type int {
+    var vcvarsall type string;
+    $vcvarsall = get_vcvarsall_path();
+
+    if ($vcvarsall.len() == 0) {
+        hefesto.sys.echo("ERROR: Unable to find MSVC install location.\n");
+        result 1;
+    }
+
+    var cfg_postfix type string;
+    $cfg_postfix = "mt";
+
+    var option type list;
+    $option = hefesto.sys.get_option("link-model");
+    if ($option.count() > 0) {
+        var link_model type string;
+        $link_model = $option.item(0);
+        if ($link_model == "shared") {
+            $cfg_postfix = "md";
+        }
+    }
+
     var msvcrtlib type string;
     var compile_model type list;
+
     $compile_model = hefesto.sys.get_option("compile-model");
     $msvcrtlib = "msvcrt.lib";
     if ($compile_model.count() > 0) {
@@ -60,27 +82,33 @@ function composite_libcutest() : result type int {
         $compile_model_data = $compile_model.item(0);
         if ($compile_model_data == "debug") {
             $msvcrtlib = "msvcrtd.lib";
+            $cfg_postfix = $cfg_postfix + "d";
         }
     }
-
-    if (msvc_configure_dev_env() != 0) {
-        hefesto.sys.echo("ERROR: Unable to configure development environment.\n");
-        result 1;
-    }
-
-    var vsdevcmd type string;
-    $vsdevcmd = hefesto.sys.env("HEFESTO_MSVC_TOOLSET_VSDEVCMD");
 
     var arch type string;
     $arch = msvc_get_platform();
     if ($arch == "Win32") {
         $arch = "x86";
     }
-    $msvcrtlib = "\"%VCToolsInstallDir%\"\\" + $arch + "\\" + $msvcrtlib;
-    var composite_command type string;
-    $composite_command = $vsdevcmd + " && lib.exe /OUT:lib\\libcutest.lib lib\\libcuteststaged.lib " + $msvcrtlib;
+
+    var composite_batch type string;
+    $composite_batch = "@cd \"" + hefesto.sys.pwd() + "\" >nul 2>&1 \n" +
+                       "@call \"" + $vcvarsall + "\" " + $arch + " >nul 2>&1 \n" +
+                       "@lib.exe /VERBOSE:lib /OUT:lib\\libcutest" + $cfg_postfix +
+                                 ".lib lib\\libcuteststaged.lib \"%VCToolsInstallDir%lib\\" + $arch +
+                                 "\\" + $msvcrtlib + "\" >nul 2>&1 \n@if ErrorLevel 1 ( @exit /b 1 ) else ( @exit /b 0 )";
+    var fp type file;
+    $fp = hefesto.sys.fopen(".cplib.cmd", "wb");
+    if ($fp == 0) {
+        result 1;
+    }
+    hefesto.sys.fwrite($composite_batch, $composite_batch.len(), $fp);
+    hefesto.sys.fclose($fp);
+
     var exit_code type int;
-    $exit_code = hefesto.sys.run($composite_command);
+    $exit_code = hefesto.sys.run("cmd /c .cplib.cmd");
+
     if ($exit_code == 0) {
         var path type string;
         $path = hefesto.sys.make_path(hefesto.sys.pwd(), "lib\\libcuteststaged.lib");
@@ -88,5 +116,67 @@ function composite_libcutest() : result type int {
         $path.replace("lib$", "pdb");
         hefesto.sys.rm($path);
     }
+
+    hefesto.sys.rm(".cplib.cmd");
+
     result $exit_code;
+}
+
+local function get_vcvarsall_path() : result type string {
+    var program_files type list;
+    $program_files.add_item("Program Files (x86)");
+    $program_files.add_item("Program Files");
+
+    var year type list;
+    $year.add_item("2022");
+    $year.add_item("2019");
+    $year.add_item("2017");
+    $year.add_item("2015");
+    $year.add_item("2013");
+    $year.add_item("2012");
+    $year.add_item("2010");
+    $year.add_item("2008");
+    $year.add_item("2005");
+
+    var vsinstall_type type list;
+    $vsinstall_type.add_item("Community");
+    $vsinstall_type.add_item("Professional");
+    $vsinstall_type.add_item("Enterprise");
+
+    var metapath type string;
+
+    $metapath = "C:\\{{PROGRAMFILES}}\\Microsoft Visual Studio\\{{YEAR}}\\{{VSINSTALLTYPE}}\\VC\\Auxiliary\\Build\\vcvarsall.bat";
+
+    var y type int;
+    var p type int;
+    var v type int;
+
+    $y = 0;
+    while ($y < $year.count()) {
+        var curr_year type string;
+        $curr_year = $year.item($y);
+        $p = 0;
+        while ($p < $program_files.count()) {
+            var curr_program_files type string;
+            $curr_program_files = $program_files.item($p);
+            $v = 0;
+            while ($v < $vsinstall_type.count()) {
+                var curr_vsinstall_type type string;
+                $curr_vsinstall_type = $vsinstall_type.item($v);
+                var vcvarsall_path type string;
+                $vcvarsall_path = $metapath;
+                $vcvarsall_path.replace("\\{\\{PROGRAMFILES\\}\\}", $curr_program_files);
+                $vcvarsall_path.replace("\\{\\{YEAR\\}\\}", $curr_year);
+                $vcvarsall_path.replace("\\{\\{VSINSTALLTYPE\\}\\}", $curr_vsinstall_type);
+                if (isfile($vcvarsall_path)) {
+                    result $vcvarsall_path;
+                }
+                $v = $v + 1;
+            }
+            $p = $p + 1;
+        }
+        $y = $y + 1;
+    }
+
+    result "";
 }
