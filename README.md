@@ -54,7 +54,7 @@ you need to edit the file ``src/.ivk`` and add the following ``C Macro`` definit
 
 ### Note for Visual Studio users
 
-If you want to build ``cutest`` under ``MSVC`` you need to use invoke ``Hefesto`` as follows:
+If you want to build ``cutest`` under ``MSVC`` you need to invoke ``Hefesto`` as follows:
 
 ```
 > hefesto --toolset=msvc-c-lib
@@ -68,16 +68,16 @@ If you want to build ``lib/libcutestmtd.lib``, use:
 > hefesto --toolset=msvc-c-lib --compile-model=debug
 ```
 
-On ``64-bit`` environments 64-bit lib artifacts will be built, for ``32-bit``, use:
+On ``64-bit`` environments ``64-bit`` lib artifacts will be built, for ``32-bit``, use:
 
 ```
 >hefesto --toolset=msvc-c-lib --cpu-arch=x86
 ```
 
-After run the command above a file named ``libcutest.lib`` will be generated inside ``src/lib`` path.
+After run one of the commands listed above, a file named ``libcutest.lib`` will be generated inside ``src/lib`` path.
 Note that use ``cutest`` on ``MSVC`` is a little bit tricky. It envolves composite the ``cutest`` with your current ``msvcrt.lib``
 (it explains why the ``cutest.lib`` is so huge).
 
-When linking your test artifact. You need to add the following link option: ``/NODEFAULTLIB:MSVCRT,MSVCRTD``.
+**Important**: When linking your test artifact. You need to add the following link option: ``/NODEFAULTLIB:MSVCRT,MSVCRTD``.
 
 I have tested it over ``Microsoft Visual Studio 2019``.
