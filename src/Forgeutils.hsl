@@ -76,7 +76,7 @@ function composite_libcutest() : result type int {
     }
 
     var arch type string;
-    $arch = msvc_get_platform();
+    $arch = get_msvc_platform();
     if ($arch == "Win32") {
         $arch = "x86";
     }
@@ -195,4 +195,27 @@ function get_msvc_artifact_postfix() : result type string {
     }
 
     result $cfg_postfix;
+}
+
+function get_msvc_platform() : result type string {
+    var option type list;
+    var arch type string;
+
+    $option = hefesto.sys.get_option("cpu-arch");
+    if ($option.count() == 0) {
+        var programfilesx86 type string;
+        $programfilesx86 = hefesto.sys.env("ProgramFiles(x86)");
+        if ($programfilesx86.len() > 0) {
+            result "x64";
+        }
+        result "Win32";
+    }
+
+    $arch = $option.item(0);
+
+    if($arch == "x86" || $arch == "X86") {
+        result "Win32";
+    }
+
+    result $arch;
 }
