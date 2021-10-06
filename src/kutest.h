@@ -214,6 +214,10 @@ module_exit(mod_fini);
 #elif defined(_WIN32)
 
 #define KUTE_MAIN(test)\
+VOID DriverUnload(_In_ PDRIVER_OBJECT driver_object) {\
+	UNREFERENCED_PARAMETER(driver_object);\
+	DbgPrint("***" #test " unloaded.\n");\
+}\
 NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT driver_object, _In_ PUNICODE_STRING reg_path) {\
 	UNREFERENCED_PARAMETER(driver_object);\
 	UNREFERENCED_PARAMETER(reg_path);\
@@ -227,12 +231,7 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT driver_object, _In_ PUNICODE_STRING reg
 		DbgPrint("fail: [%d test(s) ran]\n", g_kutest_ran_tests);\
 	}\
 	return (exit_code == 0) ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;\
-}\
-VOID DriverUnload(_In_ PDRIVER_OBJECT driver_object) {\
-	UNREFERENCED_PARAMETER(driver_object);\
-	DbgPrint("***" #test " unloaded.\n");\
 }
-
 #endif
 
 #endif
