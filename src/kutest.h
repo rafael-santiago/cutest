@@ -98,19 +98,19 @@ __attribute__((__unused__)) static int g_kutest_ran_tests = 0;
 static int g_kutest_ran_tests = 0;
 
 #define KUTE_ASSERT_CHECK(msg, chk) do {\
-	if ((chk) == 0) {\
-		DbgPrint("hmm bad, bad bug in %s at line %d: %s is false.\n\r", __FILE__, __LINE__, msg);\
-		return STATUS_UNSUCCESSFUL;\
-	}\
+    if ((chk) == 0) {\
+        DbgPrint("hmm bad, bad bug in %s at line %d: %s is false.\n\r", __FILE__, __LINE__, msg);\
+        return STATUS_UNSUCCESSFUL;\
+    }\
 } while(0)
 
 #define KUTE_RUN_TEST(test) do {\
-	DbgPrint("-- running " #test "...\n\r");\
-	g_kutest_ran_tests++;\
-	if (test() != 0) {\
-		return STATUS_UNSUCCESSFUL;\
-	}\
-	DbgPrint("-- passed.\n\r");\
+    DbgPrint("-- running " #test "...\n\r");\
+    g_kutest_ran_tests++;\
+    if (test() != 0) {\
+        return STATUS_UNSUCCESSFUL;\
+    }\
+    DbgPrint("-- passed.\n\r");\
 } while(0)
 
 #endif
@@ -215,22 +215,22 @@ module_exit(mod_fini);
 
 #define KUTE_MAIN(test)\
 VOID DriverUnload(_In_ PDRIVER_OBJECT driver_object) {\
-	UNREFERENCED_PARAMETER(driver_object);\
-	DbgPrint("***" #test " unloaded.\n");\
+    UNREFERENCED_PARAMETER(driver_object);\
+    DbgPrint("***" #test " unloaded.\n");\
 }\
 NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT driver_object, _In_ PUNICODE_STRING reg_path) {\
-	UNREFERENCED_PARAMETER(driver_object);\
-	UNREFERENCED_PARAMETER(reg_path);\
-	UNREFERENCED_PARAMETER(g_kutest_ran_tests);\
-	int exit_code;\
+    UNREFERENCED_PARAMETER(driver_object);\
+    UNREFERENCED_PARAMETER(reg_path);\
+    UNREFERENCED_PARAMETER(g_kutest_ran_tests);\
+    int exit_code;\
     driver_object->DriverUnload = DriverUnload;\
-	DbgPrint("*** " #test " loaded...\n\r");\
-	if ((exit_code = test()) == 0) {\
-		DbgPrint("*** all tests passed. [%d test(s) ran]\n\r", g_kutest_ran_tests);\
-	} else {\
-		DbgPrint("fail: [%d test(s) ran]\n", g_kutest_ran_tests);\
-	}\
-	return (exit_code == 0) ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;\
+    DbgPrint("*** " #test " loaded...\n\r");\
+    if ((exit_code = test()) == 0) {\
+        DbgPrint("*** all tests passed. [%d test(s) ran]\n\r", g_kutest_ran_tests);\
+    } else {\
+        DbgPrint("fail: [%d test(s) ran]\n", g_kutest_ran_tests);\
+    }\
+    return (exit_code == 0) ? STATUS_SUCCESS : STATUS_UNSUCCESSFUL;\
 }
 #endif
 
