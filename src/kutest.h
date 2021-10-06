@@ -219,6 +219,7 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT driver_object, _In_ PUNICODE_STRING reg
 	UNREFERENCED_PARAMETER(reg_path);\
 	UNREFERENCED_PARAMETER(g_kutest_ran_tests);\
 	int exit_code;\
+    driver_object->DriverUnload = DriverUnload;\
 	DbgPrint("*** " #test " loaded...\n\r");\
 	if ((exit_code = test()) == 0) {\
 		DbgPrint("*** all tests passed. [%d test(s) ran]\n\r", g_kutest_ran_tests);\
