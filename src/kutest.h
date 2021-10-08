@@ -99,18 +99,18 @@ static int g_kutest_ran_tests = 0;
 
 #define KUTE_ASSERT_CHECK(msg, chk) do {\
     if ((chk) == 0) {\
-        DbgPrint("hmm bad, bad bug in %s at line %d: %s is false.\n\r", __FILE__, __LINE__, msg);\
+        DbgPrint("hmm bad, bad bug in %s at line %d: %s is false.\n", __FILE__, __LINE__, msg);\
         return STATUS_UNSUCCESSFUL;\
     }\
 } while(0)
 
 #define KUTE_RUN_TEST(test) do {\
-    DbgPrint("-- running " #test "...\n\r");\
+    DbgPrint("-- running " #test "...\n");\
     g_kutest_ran_tests++;\
     if (test() != 0) {\
         return STATUS_UNSUCCESSFUL;\
     }\
-    DbgPrint("-- passed.\n\r");\
+    DbgPrint("-- passed.\n");\
 } while(0)
 
 #endif
@@ -224,9 +224,9 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT driver_object, _In_ PUNICODE_STRING reg
     UNREFERENCED_PARAMETER(g_kutest_ran_tests);\
     int exit_code;\
     driver_object->DriverUnload = DriverUnload;\
-    DbgPrint("*** " #test " loaded...\n\r");\
+    DbgPrint("*** " #test " loaded...\n");\
     if ((exit_code = test()) == 0) {\
-        DbgPrint("*** all tests passed. [%d test(s) ran]\n\r", g_kutest_ran_tests);\
+        DbgPrint("*** all tests passed. [%d test(s) ran]\n", g_kutest_ran_tests);\
     } else {\
         DbgPrint("fail: [%d test(s) ran]\n", g_kutest_ran_tests);\
     }\
